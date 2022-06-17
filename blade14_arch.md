@@ -162,9 +162,11 @@ On the INSTALLER grub boot screen press the 'e' button and then edit the boot en
     Save and exit
 
   	Install Grub:
-  	`grub-install --boot-directory=/boot --efi-directory=/boot/efi /dev/nvme0n1p2`
-  	`grub-mkconfig -o /boot/grub/grub.cfg`
-  	`grub-mkconfig -o /boot/efi/EFI/arch/grub.cfg`
+  	```
+  	grub-install --boot-directory=/boot --efi-directory=/boot/efi /dev/nvme0n1p2
+  	grub-mkconfig -o /boot/grub/grub.cfg
+  	grub-mkconfig -o /boot/efi/EFI/arch/grub.cfg
+  	```
 
     * Initramfs
 
