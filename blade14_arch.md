@@ -100,15 +100,16 @@ On the INSTALLER grub boot screen press the 'e' button and then edit the boot en
 	```
 
 ### Stage 2.2 - Install the base arch system OS
+
 	```
 	pacstrap -i base base-devel efibootmgr grub linux linux-firmware networkmanager sudo vi vim bash bash-completion nvidia amd-ucode
 	```
 	
 	Now generate the fstab based on the layout in /mnt
 	
-	```
+	`
 	genfstab -U /mnt >> /mnt/etc/fstab
-	```
+	`
 
 ### Stage 2.3 - Configure the arch system
 
