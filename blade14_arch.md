@@ -101,39 +101,39 @@ On the INSTALLER grub boot screen press the 'e' button and then edit the boot en
 
 ### Stage 2.2 - Install the base arch system
 ```
-	pacstrap -i base base-devel efibootmgr grub linux linux-firmware networkmanager sudo vi vim bash bash-completion nvidia amd-ucode
+pacstrap -i base base-devel efibootmgr grub linux linux-firmware networkmanager sudo vi vim bash bash-completion nvidia amd-ucode
 ```
 	
-	Now generate the fstab based on the layout in /mnt
+Now generate the fstab based on the layout in /mnt
 	
 ```
-	genfstab -U /mnt >> /mnt/etc/fstab
+genfstab -U /mnt >> /mnt/etc/fstab
 ````
 
 ### Stage 2.3 - Configure the arch system
 
-    Now it's time to drop into the new arch system and configure it for boot.
+Now it's time to drop into the new arch system and configure it for boot.
 
 ```
-    arch-chroot /mnt
+arch-chroot /mnt
 ```
 
-    ##### Set the hostname
+##### Set the hostname
 ```
-    echo 'HOSTNAME' >> /etc/hostname
+echo 'HOSTNAME' >> /etc/hostname
 ```
 
-    ##### Set the keyboard layout
-    ```
-    echo 'KEYMAP=en_GB' >> /etc/vconsole.conf
-    ```
+##### Set the keyboard layout
+```
+echo 'KEYMAP=en_GB' >> /etc/vconsole.conf
+```
 
-    ##### Set the language
+##### Set the language
     ```
     echo 'LANG=en_GB.UTF8' >> /etc/locale.conf
     ```
 
-    ##### Set the locale
+##### Set the locale
     ```
     echo 'en_GB.UTF-8 UTF-8' >> /etc/locale.gen
     echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
