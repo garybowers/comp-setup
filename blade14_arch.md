@@ -99,7 +99,7 @@ On the INSTALLER grub boot screen press the 'e' button and then edit the boot en
 		swapon swap
 	```
 
-7. Install the base arch system OS
+### Stage 2.2 - Install the base arch system OS
 	```
 	pacstrap -i base base-devel efibootmgr grub linux linux-firmware networkmanager sudo vi vim bash bash-completion nvidia amd-ucode
 	```
@@ -110,7 +110,7 @@ On the INSTALLER grub boot screen press the 'e' button and then edit the boot en
 	genfstab -U /mnt >> /mnt/etc/fstab
 	```
 
-8. Configure the arch system
+### Stage 2.3 - Configure the arch system
 
     Now it's time to drop into the new arch system and configure it for boot.
 
