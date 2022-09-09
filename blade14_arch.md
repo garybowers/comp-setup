@@ -156,17 +156,17 @@ Save with `esc wq`
 
 ##### Configure the bootloader
 
-Edit the `/etc/default/grub` file in the `GRUB_CMDLINE_LINUX_DEFAULT=` filed add within the quotes `nvidia-drm.modeset=1`
+Edit the `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX_DEFAULT=` field add within the quotes `nvidia-drm.modeset=1`
 Add in the 'GRUB_CMDLINE_LINUX=' field add in the quotes `cryptdevice=/dev/nvme0n1p3:luks_root`
 
 Save and exit
 
-	Install Grub:
-	```
-	grub-install --boot-directory=/boot --efi-directory=/boot/efi /dev/nvme0n1p2
-	grub-mkconfig -o /boot/grub/grub.cfg
-	grub-mkconfig -o /boot/efi/EFI/arch/grub.cfg
-	```
+Install Grub:
+```
+grub-install --boot-directory=/boot --efi-directory=/boot/efi /dev/nvme0n1p2
+grub-mkconfig -o /boot/grub/grub.cfg
+grub-mkconfig -o /boot/efi/EFI/arch/grub.cfg
+```
 
 ##### Initramfs
 
