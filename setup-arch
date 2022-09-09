@@ -1,0 +1,223 @@
+#!/usr/bin/env bash
+
+#
+# Gary's arch linux installer script
+#
+# Note: This assumes you already have a minimal install already
+# and you have internet connectivity
+#
+#   Usage:  setup-arch <DE> <OPTIMUS/Y/N>
+#    e.g.  ./setup-arch gnome Y
+#
+
+
+echo Installing arch with desktop environment: $1
+sudo systemctl enable --now NetworkManager
+sleep 2 
+
+# Get the latest package keys for pacman
+sudo pacman-key --populate
+sudo pacman -Suy --noconfirm
+
+mkdir -p /tmp/aur
+
+# This function just gets a specific aur package and installs it
+# Files are in the tmp folder so cleaned up after reboot
+function aurinst {
+	echo Installing aur package $1
+	if [ -d /tmp/aur/$1 ]; then
+		rm -rf /tmp/aur/$1
+	fi
+	cd /tmp/aur && git clone https://aur.archlinux.org/$1.git && cd $1 && yes | makepkg -sic --needed
+	rm -rf /tmp/aur/$1 
+}
+
+# Install Xorg and hardware drivers
+sudo pacman -S --noconfirm --needed xorg xorg-xinit bluez blueman wpa_supplicant tlp dmidecode xdg-utils intltool linux-headers lshw acpi_call acpid fwupd
+
+# Install audio system
+sudo pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire-jack pipewire-alsa
+
+# Install Fonts
+sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu xorg-fonts-misc xorg-fonts-type1 \
+                                    noto-fonts noto-fonts-extra ttf-carlito ttf-croscore ttf-hack ttf-anonymous-pro \
+                                    ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono \
+                                    ttf-opensans ttf-roboto-mono ttf-roboto
+
+# Install system services
+sudo pacman -S --noconfirm --needed wireguard-tools samba dnsmasq openresolv nss-mdns cups cups-pdf openssh ufw openvpn networkmanager-openvpn libxcrypt-compat
+
+# Install Applications
+sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree firefox thunderbird libreoffice gimp dnsutils mpv handbrake irssi cmus xterm archlinux-wallpaper
+
+sleep 4
+
+PLATFORM=$(sudo dmidecode -s system-manufacturer)
+gpu=$(lspci | grep -i '.* vga .* nvidia .*')
+shopt -s nocasematch
+
+if [[ $gpu == *' nvidia '* ]]; then
+  printf 'Nvidia GPU is present:  %s\n' "$gpu"
+  sudo pacman -S --noconfirm --needed nvidia nvidia-settings
+fi
+
+echo Platform: $PLATFORM
+if [ "$PLATFORM" == "QEMU" ]; then
+	sudo pacman -S --noconfirm --needed spice-vdagent
+	sudo systemctl enable spice-vdagentd
+fi
+
+sudo touch /etc/polkit-1/rules.d/49-allow-passwordless-printer-admin.rules
+sudo bash -c 'cat << EOF > /etc/polkit-1/rules.d/49-allow-passwordless-printer-admin.rules
+polkit.addRule(function(action, subject) { 
+    if (action.id == "org.opensuse.cupspkhelper.mechanism.all-edit" && 
+        subject.isInGroup("wheel")){ 
+        return polkit.Result.YES; 
+    } 
+});
+EOF'
+
+# install development and user tools
+sudo pacman -S --noconfirm --needed git tig byobu libxss python-setuptools mesa-demos yelp-tools check meson gobject-introspection glxinfo python-dbus qemu virt-manager virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat python-dbusmock rust docker go typescript just libqalculate leafpad
+
+aurinst libfirmware-manager
+
+sudo usermod -aG docker $USER
+sudo usermod -aG libvirt $USER
+sudo systemctl enable --now bluetooth.service
+sudo systemctl enable --now cups.socket
+sudo systemctl enable --now avahi-daemon.service
+sudo systemctl enable --now dnsmasq.service
+sudo systemctl enable --now ebtables.service
+sudo systemctl enable --now libvirtd.service
+sudo systemctl enable --now sshd.service
+sudo systemctl enable --now ufw.service
+sudo systemctl enable --now acpid.service
+
+######## GNOME ########
+if [ "$1" == "gnome" ]; then 
+  echo "Installing $1"
+  sudo pacman -S --noconfirm --needed gnome-shell gnome-backgrounds gnome-color-manager gnome-disk-utility gnome-font-viewer gnome-menus \
+                                      gnome-remote-desktop gnome-screenshot gnome-shell-extensions gnome-software gnome-system-monitor gnome-connections \
+                                      gnome-user-share mutter nautilus orca xdg-user-dirs-gtk simple-scan gnome-calculator gnome-contacts rhythmbox \
+                                      gnome-themes-extra gnome-shell-extension-appindicator gnome-tweaks gnome-calendar deja-dup gnome-terminal \
+                                      system-config-printer modemmanager nautilus-image-converter nautilus-sendto nautilus-share gnome-shell-extension-gtile \
+                                      gnome-icon-theme-extras dconf-editor eog remmina libsass parallel sassc gtk-engine-murrine fd gedit gstreamer gst-libav \
+                                      gnome-mahjongg gnome-weather
+
+  aurinst ttf-roboto-slab
+  aurinst pop-icon-theme-git
+  aurinst pop-gtk-theme-git
+  aurinst pop-fonts
+  aurinst pop-theme
+  #aurinst gnome-shell-extension-pop-shell-git
+  aurinst gnome-shell-extension-no-overview
+  aurinst gnome-shell-extension-dash-to-dock
+  aurinst gnome-shell-extension-desktop-icons-ng
+
+  gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark
+  gsettings set org.gnome.desktop.interface enable-hot-corners false
+  gsettings set org.gnome.desktop.interface icon-theme 'Pop'
+  gsettings set org.gnome.desktop.interface clock-show-seconds true
+  gsettings set org.gnome.desktop.interface clock-show-date true
+  gsettings set org.gnome.desktop.interface show-battery-percentage true
+  gsettings set org.gnome.desktop.interface font-name "Fira Sans Book 10"
+  gsettings set org.gnome.desktop.interface monospace-font-name "Fira Mono Regular 11"
+  gsettings set org.gnome.desktop.interface document-font-name "Roboto Slab Regular 11"
+  gsettings set org.gnome.desktop.peripherals.mouse natural-scroll true
+  gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll true
+  gsettings set org.gnome.settings-daemon.plugins.media-keys www "['<Super>b']"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys home "['<Super>f']"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys screensaver "['<Super>l']"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "Terminal"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "/usr/bin/gnome-terminal"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '"<Super>T"'
+
+  sudo systemctl enable gdm.service
+
+  # Gnome shell extensions
+  gnome-extensions enable apps-menu@gnome-shell-extensions.gcampax.github.com
+  gnome-extensions enable no-overview@fthx
+  gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
+  gnome-extensions enable workspace-indicator@gnome-shell-extensions.gcampax.github.com
+  gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com
+  gnome-extensions disable dash-to-dock@micxgx.gmail.com
+  gnome-extensions enable apps-menu@gnome-shell-extensions.gcampax.github.com
+  gsettings set org.gnome.shell disable-user-extensions false
+  gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink true
+  gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed true
+  gsettings set org.gnome.shell.extensions.user-theme name 'Pop'
+  gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+  gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 '["<super>1"]'
+  gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 '["<super>2"]'
+  gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 '["<super>3"]'
+  gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 '["<super>4"]'
+  gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 '["<Shift><Super>exclam"]'
+  gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 '["<Shift><Super>at"]'
+
+## Gnome Terminal profile
+  echo "[/]
+default='8480d7e5-775a-4275-94ba-2a1b07c352f9'
+list=['b1dcc9dd-5262-4d8d-a863-c897e6d979b9', '8480d7e5-775a-4275-94ba-2a1b07c352f9']
+
+[:8480d7e5-775a-4275-94ba-2a1b07c352f9]
+background-color='rgb(0,0,0)'
+font='IBM Plex Mono 12'
+foreground-color='rgb(255,255,255)'
+palette=['rgb(0,0,0)', 'rgb(205,0,0)', 'rgb(0,205,0)', 'rgb(205,205,0)', 'rgb(0,0,238)', 'rgb(205,0,205)', 'rgb(0,205,205)', 'rgb(229,229,229)', 'rgb(127,127,127)', 'rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(92,92,255)', 'rgb(255,0,255)', 'rgb(0,255,255)', 'rgb(255,255,255)']
+use-system-font=false
+use-theme-colors=false
+visible-name='dev1'
+
+[:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+use-system-font=true" > /tmp/terminal.ini
+
+  dconf load /org/gnome/terminal/legacy/profiles:/ < /tmp/terminal.ini
+fi
+
+#### End of Gnome Install
+
+
+### KDE Install ###
+if [ "$1" == "kde" ]; then
+  echo "INSTALLING $1"
+  sudo pacman -S --noconfirm --needed sddm plasma-desktop konsole dolphin dolphin-plugins baloo kmix kate kcalc kdeconnect kmail kompare krdc krfb \
+                                      kwalletmanager okular partitionmanager spectacle bluedevil plasma-workspace-wallpapers kscreen bluedevil powerdevil
+  sudo systemctl enable sddm.service
+fi
+
+
+if [ "$1" == "i3" ]; then
+  echo "INSTALLING $1"
+  sudo pacman -S --noconfirm --needed i3-wm i3lock i3status
+fi
+
+if [ "$1" == "awesome" ]; then
+  echo "INSTALLING $1"
+  sudo pacman -S --noconfirm --needed awesome gdm
+fi
+
+if [ "$2" == "Y" ]; then
+  aurinst optimus-manager
+  aurinst gdm-prime
+  sudo systemctl enable gdm
+  sudo systemctl enable --now optimus-manager
+fi
+
+
+sudo flatpak install -y flathub \
+	spotify \
+	slack \
+	cheese \
+	app/org.videolan.VLC/x86_64/stable \
+	app/io.github.Hexchat/x86_64/stable \
+	com.obsproject.Studio \
+	com.valvesoftware.Steam
+
+sudo chown gary:gary /tmp/aur
+aurinst google-chrome
+aurinst sublime-text-4 
+
+cd /tmp && curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-392.0.0-linux-x86_64.tar.gz && \
+        tar -xf google-cloud-cli-392.0.0-linux-x86_64.tar.gz && sudo mv /tmp/google-cloud-sdk /opt
