@@ -140,28 +140,24 @@ echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
 locale-gen
 ```
 
-##### Edit the hosts file
+##### Set the hosts file
 ```
-vim /etc/hosts
+echo '127.0.0.1 localhost' >> /etc/hosts
+echo '::1 localhost' >> /etc/hosts
+echo '127.0.1.1 hostname.my.domain.tld hostname' >> /etc/hosts
 ```
-Add in the file so it looks like this:
-
-```
-127.0.0.1 localhost
-::1 localhost
-127.0.1.1 hostname.my.domain.tld hostname
-```
-
-Save with `esc wq`
 
 ##### Configure the bootloader
 
 Edit the `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX_DEFAULT=` field add within the quotes `nvidia-drm.modeset=1`
+e.g. `GRUB_CMDLINE_LINUX_DEFAULT='nvidia-drm.modeset=1'`
+
 Add in the 'GRUB_CMDLINE_LINUX=' field add in the quotes `cryptdevice=/dev/nvme0n1p3:luks_root`
+e.g. ``
 
 Save and exit
 
-Install Grub:
+**Install Grub:**
 ```
 grub-install --boot-directory=/boot --efi-directory=/boot/efi /dev/nvme0n1p2
 grub-mkconfig -o /boot/grub/grub.cfg
