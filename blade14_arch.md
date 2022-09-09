@@ -29,74 +29,74 @@ On the INSTALLER grub boot screen press the 'e' button and then edit the boot en
 
 ### Stage 2.1 - Disks
 
-1.	Prepare for full disk encryption `modprobe dm-crypt` + `modprobe dm-mod`
+##### 1.  Prepare for full disk encryption `modprobe dm-crypt` + `modprobe dm-mod`
 
-2.  Partition your disk (This will erase everything!)
-	`lsblk` - get your hard disk e.g. `nvme0n1`
-	run `fdisk /dev/nvme0n1`
-	now delete all the partitions by pressing `d` until you have no partitions left, then press `w`
+##### 2.  Partition your disk (This will erase everything!)
+`lsblk` - get your hard disk e.g. `nvme0n1`
+run `fdisk /dev/nvme0n1`
+now delete all the partitions by pressing `d` until you have no partitions left, then press `w`
 
-	Create your new partitions
+Create your new partitions
 
-	Press `n` to create a new parition
+Press `n` to create a new parition
 
 ```
-	Layout:
-		Partition number: *1* 
-		Starting Block: leave as default
-		Finish Block: `+512MB`
-		Type: 1 (EFI System)
-		Dev: /dev/nvme0n1p1
+Layout:
+	Partition number: *1* 
+	Starting Block: leave as default
+	Finish Block: `+512MB`
+	Type: 1 (EFI System)
+	Dev: /dev/nvme0n1p1
 
-		Partition number: *2*
-		Starting Block: leave as default
-		Finish Block: `+512MB`
-		Type: 20 (Linux filesystem)
-		Dev: /dev/nvme0n1p2
+	Partition number: *2*
+	Starting Block: leave as default
+	Finish Block: `+512MB`
+	Type: 20 (Linux filesystem)
+	Dev: /dev/nvme0n1p2
 
-		Partition number: *3)
-		Starting Block: leave as default
-		Finish Block: leave as default
-		Type: 20 (Linux filesystem)
-		Dev: /dev/nvme0n1p3
+	Partition number: *3)
+	Starting Block: leave as default
+	Finish Block: leave as default
+	Type: 20 (Linux filesystem)
+	Dev: /dev/nvme0n1p3
 ```
 
-
-3. 	Setup LUKS Encryption
+##### 3.  Setup LUKS Encryption
 	
-	To set up the encrypted filesystem run:
-	`cryptsetup luksFormat -v -s 512 -h sha512 /dev/nvme0n1p3`
+To set up the encrypted filesystem run:
+`cryptsetup luksFormat -v -s 512 -h sha512 /dev/nvme0n1p3`
 
-	Once you follow the instructions and entered a passsword mount the disk
-	`cryptsetup open /dev/nvme0n1p3 luks_root`
+Once you follow the instructions and entered a passsword mount the disk
+`cryptsetup open /dev/nvme0n1p3 luks_root`
 
-	Format the encrypted volume
-	`mkfs.ext4 -L root /dev/mapper/luks_root`
+Format the encrypted volume
+`mkfs.ext4 -L root /dev/mapper/luks_root`
 
-4.	Format the boot paritions
+##### 4.  Format the boot paritions
 
-	Format the EFI System Partition as FAT 
-	`mksfs.vfat -n "EFI SYSTEM" /dev/nvme0n1p1`
+Format the EFI System Partition as FAT 
+`mksfs.vfat -n "EFI SYSTEM" /dev/nvme0n1p1`
 
-	Format the Boot parition as EXT4
-	`mkfs.ext4 -L boot /dev/nvme0n1p2`
+Format the Boot parition as EXT4
+`mkfs.ext4 -L boot /dev/nvme0n1p2`
 
-5.	Mount the disks for installation
-	```
-		mount /dev/mapper/luks_root /mnt
-		mkdir /mnt/boot
-		mount /dev/nvme0n1p2 /mnt/boot
-		mkdir /mnt/boot/efi
-		mount /dev/nvme0n1p1 /mnt/boot/efi
-	```
+##### 5.  Mount the disks for installation
+
+```
+mount /dev/mapper/luks_root /mnt
+mkdir /mnt/boot
+mount /dev/nvme0n1p2 /mnt/boot
+mkdir /mnt/boot/efi
+mount /dev/nvme0n1p1 /mnt/boot/efi
+```
 
 6.	Create the swap file on the encrypted volume
 	```
-		cd /mnt
-		dd if=/dev/zero of=swap bs=1M count=8192
-		chmod 0600 swap
-		mkswap swap
-		swapon swap
+	cd /mnt
+	dd if=/dev/zero of=swap bs=1M count=8192
+	chmod 0600 swap
+	mkswap swap
+	swapon swap
 	```
 
 ### Stage 2.2 - Install the base arch system
