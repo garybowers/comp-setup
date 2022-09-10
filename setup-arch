@@ -67,6 +67,7 @@ if [ "$PLATFORM" == "QEMU" ]; then
 	sudo systemctl enable spice-vdagentd
 fi
 
+# Add rule for printing by users
 sudo touch /etc/polkit-1/rules.d/49-allow-passwordless-printer-admin.rules
 sudo bash -c 'cat << EOF > /etc/polkit-1/rules.d/49-allow-passwordless-printer-admin.rules
 polkit.addRule(function(action, subject) { 
@@ -76,6 +77,11 @@ polkit.addRule(function(action, subject) {
     } 
 });
 EOF'
+
+# Fix mdns printing
+sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf 
+
+
 
 # install development and user tools
 sudo pacman -S --noconfirm --needed git tig byobu libxss python-setuptools mesa-demos yelp-tools check meson gobject-introspection glxinfo python-dbus qemu virt-manager virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat python-dbusmock rust docker go typescript just libqalculate leafpad
@@ -93,6 +99,7 @@ sudo systemctl enable --now libvirtd.service
 sudo systemctl enable --now sshd.service
 sudo systemctl enable --now ufw.service
 sudo systemctl enable --now acpid.service
+
 
 ######## GNOME ########
 if [ "$1" == "gnome" ]; then 
@@ -203,6 +210,8 @@ if [ "$2" == "Y" ]; then
   aurinst gdm-prime
   sudo systemctl enable gdm
   sudo systemctl enable --now optimus-manager
+  # Disable Wayland
+  sudo sed -i 's/\#WaylandEnable\=false/WaylandEnable=false/g' /etc/gdm/custom.conf
 fi
 
 
