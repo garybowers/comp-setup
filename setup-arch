@@ -48,7 +48,7 @@ sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu xorg-
 sudo pacman -S --noconfirm --needed wireguard-tools samba dnsmasq openresolv nss-mdns cups cups-pdf openssh ufw openvpn networkmanager-openvpn libxcrypt-compat
 
 # Install Applications
-sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree firefox thunderbird libreoffice gimp dnsutils mpv handbrake irssi cmus xterm archlinux-wallpaper
+sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree firefox thunderbird libreoffice gimp dnsutils mpv handbrake irssi cmus xterm archlinux-wallpaper conky
 
 sleep 4
 
@@ -99,6 +99,11 @@ sudo systemctl enable --now libvirtd.service
 sudo systemctl enable --now sshd.service
 sudo systemctl enable --now ufw.service
 sudo systemctl enable --now acpid.service
+
+## TLP Setup
+sudo systemctl mask systemd-rfkill.service
+sudo systemctl mask systemd-rfkill.socket
+sudo systemctl enable --now tlp
 
 
 ######## GNOME ########
