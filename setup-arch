@@ -90,6 +90,12 @@ aurinst libfirmware-manager
 
 sudo usermod -aG docker $USER
 sudo usermod -aG libvirt $USER
+
+##### FIX USB COPY HANGING #####
+sudo sysctl -w vm.dirty_bytes=50331648
+sudo sysctl -w vm.dirty_background_bytes=16777216
+################################
+
 sudo systemctl enable --now bluetooth.service
 sudo systemctl enable --now cups.socket
 sudo systemctl enable --now avahi-daemon.service
