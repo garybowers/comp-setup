@@ -53,10 +53,10 @@ sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync cur
 sleep 4
 
 PLATFORM=$(sudo dmidecode -s system-manufacturer)
-gpu=$(lspci | grep -i '.* vga .* nvidia .*')
+GPU=$(lspci | grep -i '.* vga .* nvidia .*')
 shopt -s nocasematch
 
-if [[ $gpu == *' nvidia '* ]]; then
+if [[ $GPU == *' nvidia '* ]]; then
   printf 'Nvidia GPU is present:  %s\n' "$gpu"
   sudo pacman -S --noconfirm --needed nvidia nvidia-settings
 fi
@@ -78,10 +78,33 @@ polkit.addRule(function(action, subject) {
 });
 EOF'
 
+# Add aurinst
+sudo touch /usr/local/bin/aurinst
+sudo bash -c 'cat << EOF > /usr/local/bin/aurinst
+#!/usr/bin/env bash
+PACKAGE=$1
+
+if [ $# -eq 0 ]
+then
+	echo "No package proivided! Usage: aurinst <package>"
+	exit 1
+fi
+
+echo Installing package $PACKAGE
+
+if [ -d /tmp/aur/$PACKAGE ]; then
+	sudo rm -rf /tmp/aur/$PACKAGE
+fi
+
+mkdir -p /tmp/aur
+
+cd /tmp/aur && git clone https://aur.archlinux.org/$PACKAGE.git && cd $PACKAGE && yes | makepkg -sic --needed
+rm -rf /tmp/aur
+EOF'
+sudo chmod +x /usr/local/bin/aurinst
+
 # Fix mdns printing
 sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf 
-
-
 
 # install development and user tools
 sudo pacman -S --noconfirm --needed git tig byobu libxss python-setuptools mesa-demos yelp-tools check meson gobject-introspection glxinfo python-dbus qemu virt-manager virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat python-dbusmock rust docker go typescript just libqalculate leafpad
@@ -92,8 +115,11 @@ sudo usermod -aG docker $USER
 sudo usermod -aG libvirt $USER
 
 ##### FIX USB COPY HANGING #####
-sudo sysctl -w vm.dirty_bytes=50331648
-sudo sysctl -w vm.dirty_background_bytes=16777216
+sudo touch /etc/sysctl.d/99-sysctl.conf
+sudo bash -c 'cat << EOF > /etc/sysctl.d/99-sysctl.conf
+vm.dirty_bytes=50331648
+vm.dirty_background_bytes=16777216
+EOF'
 ################################
 
 sudo systemctl enable --now bluetooth.service
@@ -115,7 +141,7 @@ sudo systemctl enable --now tlp
 ######## GNOME ########
 if [ "$1" == "gnome" ]; then 
   echo "Installing $1"
-  sudo pacman -S --noconfirm --needed gnome-shell gnome-backgrounds gnome-color-manager gnome-disk-utility gnome-font-viewer gnome-menus \
+  sudo pacman -S --noconfirm --needed gdm gnome-shell gnome-backgrounds gnome-color-manager gnome-disk-utility gnome-font-viewer gnome-menus \
                                       gnome-remote-desktop gnome-screenshot gnome-shell-extensions gnome-software gnome-system-monitor gnome-connections \
                                       gnome-user-share mutter nautilus orca xdg-user-dirs-gtk simple-scan gnome-calculator gnome-contacts rhythmbox \
                                       gnome-themes-extra gnome-shell-extension-appindicator gnome-tweaks gnome-calendar deja-dup gnome-terminal \
@@ -224,7 +250,6 @@ if [ "$2" == "Y" ]; then
   # Disable Wayland
   sudo sed -i 's/\#WaylandEnable\=false/WaylandEnable=false/g' /etc/gdm/custom.conf
 fi
-
 
 sudo flatpak install -y flathub \
 	spotify \
