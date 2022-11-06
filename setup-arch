@@ -107,7 +107,7 @@ sudo chmod +x /usr/local/bin/aurinst
 sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf 
 
 # install development and user tools
-sudo pacman -S --noconfirm --needed git tig byobu libxss python-setuptools mesa-demos yelp-tools check meson gobject-introspection glxinfo python-dbus qemu virt-manager virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat python-dbusmock rust docker go typescript just libqalculate leafpad
+sudo pacman -S --noconfirm --needed git tig byobu libxss python-setuptools mesa-demos yelp-tools check meson gobject-introspection glxinfo python-dbus qemu virt-manager virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat python-dbusmock rust docker go typescript just libqalculate leafpad gvim
 
 aurinst libfirmware-manager
 
@@ -147,7 +147,7 @@ if [ "$1" == "gnome" ]; then
                                       gnome-themes-extra gnome-shell-extension-appindicator gnome-tweaks gnome-calendar deja-dup gnome-terminal \
                                       system-config-printer modemmanager nautilus-image-converter nautilus-sendto nautilus-share gnome-shell-extension-gtile \
                                       gnome-icon-theme-extras dconf-editor eog remmina libsass parallel sassc gtk-engine-murrine fd gedit gstreamer gst-libav \
-                                      gnome-mahjongg gnome-weather
+                                      gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme
 
   aurinst ttf-roboto-slab
   aurinst pop-icon-theme-git
