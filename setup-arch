@@ -33,7 +33,7 @@ function aurinst {
 }
 
 # Install Xorg and hardware drivers
-sudo pacman -S --noconfirm --needed xorg xorg-xinit bluez blueman wpa_supplicant tlp dmidecode xdg-utils intltool linux-headers lshw acpi_call acpid fwupd
+sudo pacman -S --noconfirm --needed xorg xorg-xinit bluez blueman wpa_supplicant tlp dmidecode xdg-utils intltool linux-headers lshw acpi_call acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon
 
 # Install audio system
 sudo pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire-jack pipewire-alsa
