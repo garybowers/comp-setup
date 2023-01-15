@@ -27,6 +27,15 @@ On the INSTALLER grub boot screen press the 'e' button and then edit the boot en
 
 3. Set NTP with `timedatectl set-ntp true`
 
+4. Update the archlinux keyring
+```
+killall gpg-agent
+rm -rf /etc/pacman.d/gnupg
+pacman-key --init
+pacman-key --populate archlinux
+pacman -Sy archlinux-keyring
+```
+
 ### Stage 2.1 - Disks
 
 ##### 1.  Prepare for full disk encryption `modprobe dm-crypt` + `modprobe dm-mod`
