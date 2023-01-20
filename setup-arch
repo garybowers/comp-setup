@@ -33,10 +33,19 @@ function aurinst {
 }
 
 # Install Xorg and hardware drivers
-sudo pacman -S --noconfirm --needed xorg xorg-xinit bluez blueman wpa_supplicant tlp dmidecode xdg-utils intltool linux-headers lshw acpi_call acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon
+sudo pacman -S --noconfirm --needed xorg xorg-xinit tlp dmidecode xdg-utils intltool linux-headers lshw acpi_call acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon
 
-# Install audio system
+# Install Bluetooth Stack
+sudo pacman -S --noconfirm --needed bluez blueman
+
+# Install Network Stack
+sudo pacman -S --noconfirm --needed wpa_supplicant dnsmasq openresolv nss-mdns wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils
+
+# Install Audio Stack
 sudo pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire-jack pipewire-alsa
+
+# Install Print Services
+sudo pacman -S --noconfirm --needed cups cups-pdf
 
 # Install Fonts
 sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu xorg-fonts-misc xorg-fonts-type1 \
@@ -44,11 +53,8 @@ sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu xorg-
                                     ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono \
                                     ttf-opensans ttf-roboto-mono ttf-roboto
 
-# Install system services
-sudo pacman -S --noconfirm --needed wireguard-tools samba dnsmasq openresolv nss-mdns cups cups-pdf openssh ufw openvpn networkmanager-openvpn libxcrypt-compat
-
 # Install Applications
-sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree firefox thunderbird libreoffice gimp dnsutils mpv handbrake irssi cmus xterm archlinux-wallpaper conky
+sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree firefox thunderbird libreoffice gimp mpv handbrake irssi cmus xterm archlinux-wallpaper conky
 
 sleep 4
 
