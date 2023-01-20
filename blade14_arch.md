@@ -92,13 +92,7 @@ Once you follow the instructions and entered a passsword open the disk:
 cryptsetup open /dev/nvme0n1p3 luks_root
 ```
 
-Format the encrypted volume as ext4:
-
-```
-mkfs.ext4 -L root /dev/mapper/luks_root
-```
-
-##### 4.  Format the boot paritions
+##### 4.  Format the paritions
 
 Format the EFI System Partition as FAT
 
