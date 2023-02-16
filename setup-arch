@@ -32,12 +32,7 @@ function aurinst {
 	rm -rf /tmp/aur/$1 
 }
 
-# Basic system tools
-sudo pacman -S --noconfirm --needed dmidecode reflector
-
-# Enable reflector
-sudo systemctl enable --now reflector.service
-
+sudo pacman -S --noconfirm --needed dmidecode
 
 PLATFORM=$(sudo dmidecode -s system-manufacturer)
 GPU=$(lspci | grep -i '.* vga .* nvidia .*')
@@ -51,7 +46,7 @@ fi
 echo Platform: $PLATFORM
 
 # Install Xorg and hardware drivers
-sudo pacman -S --noconfirm --needed xorg xorg-xinit tlp xdg-utils intltool linux-headers acpi_call acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon lshw
+sudo pacman -S --noconfirm --needed xorg xorg-xinit tlp dmidecode xdg-utils intltool linux-headers acpi_call acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon lshw
 
 # Install Bluetooth Stack
 if [ "$PLATFORM" != "QEMU" ]; then
@@ -78,6 +73,9 @@ sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu xorg-
 # Install Applications
 sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree xterm git 
 
+# Install standard applications
+sudo pacman -S --noconfirm --needed firefox thunderbird libreoffice thunderbird gimp keepassxc
+
 sleep 4
 
 if [ "$PLATFORM" == "QEMU" ]; then
@@ -99,7 +97,6 @@ EOF'
 
 # Add aurinst
 sudo touch /usr/local/bin/aurinst
-sudo chmod +x /usr/local/bin/aurinst
 sudo bash -c 'cat << EOF > /usr/local/bin/aurinst
 #!/usr/bin/env bash
 PACKAGE=$1
@@ -121,6 +118,7 @@ mkdir -p /tmp/aur
 cd /tmp/aur && git clone https://aur.archlinux.org/$PACKAGE.git && cd $PACKAGE && yes | makepkg -sic --needed
 rm -rf /tmp/aur
 EOF'
+sudo chmod +x /usr/local/bin/aurinst
 
 # Fix mdns printing
 sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf 
