@@ -99,23 +99,23 @@ EOF'
 sudo touch /usr/local/bin/aurinst
 sudo bash -c 'cat << EOF > /usr/local/bin/aurinst
 #!/usr/bin/env bash
-PACKAGE=$1
+PACKAGE=\$1
 
-if [ $# -eq 0 ]
+if [ \$# -eq 0 ]
 then
 	echo "No package proivided! Usage: aurinst <package>"
 	exit 1
 fi
 
-echo Installing package $PACKAGE
+echo Installing package \$PACKAGE
 
-if [ -d /tmp/aur/$PACKAGE ]; then
-	sudo rm -rf /tmp/aur/$PACKAGE
+if [ -d /tmp/aur/\$PACKAGE ]; then
+	sudo rm -rf /tmp/aur/\$PACKAGE
 fi
 
 mkdir -p /tmp/aur
 
-cd /tmp/aur && git clone https://aur.archlinux.org/$PACKAGE.git && cd $PACKAGE && yes | makepkg -sic --needed
+cd /tmp/aur && git clone https://aur.archlinux.org/\$PACKAGE.git && cd \$PACKAGE && yes | makepkg -sic --needed
 rm -rf /tmp/aur
 EOF'
 sudo chmod +x /usr/local/bin/aurinst
