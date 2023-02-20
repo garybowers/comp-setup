@@ -1,13 +1,22 @@
 #!/usr/bin/env bash
 
-export DISK=vda
-export COMPNAME=gb2-vdi
-export EFI=true
+echo "Which disk should I use?"
+read DISK
 
+echo "What is the name of the computer?"
+read COMPNAME
+
+read "Root password: "
+read ROOTPASSWORD
+
+read "Username of the user: "
+read USERNAME
+
+read "Password of the user: "
+read USERPASSWORD
 
 echo $DISK
 echo $COMPNAME
-echo $EFI
 
 pacman-key --init
 pacman-key --populate arch-linux
@@ -37,8 +46,27 @@ chmod 0600 /mnt/swap
 mkswap /mnt/swap
 swapon /mnt/swap
 
-pacstrap -i /mnt base base-devel linux linux-firmware networkmanager efibootmgr grub sudo vi vim bash bash-completion git
+pacstrap -i /mnt base base-devel linux linux-firmware networkmanager efibootmgr grub sudo vi vim bash bash-completion git curl wget
+genfstab -U /mnt >> /mnt/etc/fstab
 
-arch-chroot /mnt/arch 
-arch-chroot /mnt/arch mkinitcpio -p linux
+echo $COMPNAME >> /mnt/etc/hostname
 
+echo '127.0.0.1 localhost' >> /mnt/etc/hosts
+echo '::1 localhost' >> /mnt/etc/hosts
+echo 127.0.1.1 $COMPNAME.net.bowers1.com $COMPNAME >> /mnt/etc/hosts
+
+echo 'LANG=en_US.UTF8' >> /etc/locale.conf 
+echo 'en_GB.UTF-8 UTF-8' >> /etc/locale.gen
+echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+
+arch-chroot /mnt locale-gen
+arch-chroot /mnt mkinitcpio -p linux
+arch-chroot /mnt grub-install --boot-directory=/boot --efi-directory=/boot/efi /dev/nvme0n1p2 && \
+		 grub-mkconfig -o /boot/grub/grub.cfg && \
+		 grub-mkconfig -o /boot/efi/EFI/arch/grub.cfg && \
+
+arch-chroot /mnt useradd -m $USERNAME -G wheel,audio,video
+arch-chroot /mnt echo root:$ROOTPASSWORD | chpasswd
+
+curl -k https://raw.githubusercontent.com/garybowers/comp-setup/main/setup-arch -o /mnt/setup-arch
+chmod +x /mnt/setup-arch
