@@ -67,8 +67,35 @@ arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 arch-chroot /mnt grub-mkconfig -o /boot/efi/EFI/arch/grub.cfg
 
 arch-chroot /mnt useradd -m $USERNAME -G wheel,audio,video
+arch-chroot /mnt echo $USERNAME:$USERPASSWORD | chpasswd
+arch-chroot /mnt echo $USERNAME:$USERPASSWORD
+
 arch-chroot /mnt echo root:$ROOTPASSWORD | chpasswd
+arch-chroot /mnt echo root:$ROOTPASSWORD
 
 curl -k https://raw.githubusercontent.com/garybowers/comp-setup/main/setup-arch -o /mnt/setup-arch
 chmod +x /mnt/setup-arch
 
+
+# Install Network Stack
+arch chroot /mnt pacman -S --noconfirm --needed wpa_supplicant dnsmasq openresolv nss-mdns wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils
+
+# Install Audio Stack
+arch chroot /mnt pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire-jack pipewire-alsa
+
+arch chroot /mnt pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu xorg-fonts-misc xorg-fonts-type1 \
+                                    noto-fonts noto-fonts-extra noto-fonts-emoji ttf-carlito ttf-croscore ttf-hack ttf-anonymous-pro \
+                                    ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono \
+                                    ttf-opensans ttf-roboto-mono ttf-roboto
+
+arch chroot /mnt pacman -S --noconfirm --needed firefox thunderbird libreoffice thunderbird gimp keepassxc
+
+arch chroot /mnt pacman -S --noconfirm --needed gdm gnome-shell gnome-backgrounds gnome-color-manager gnome-disk-utility gnome-font-viewer gnome-menus \
+                                      gnome-remote-desktop gnome-screenshot gnome-shell-extensions gnome-software gnome-system-monitor gnome-connections \
+                                      gnome-user-share mutter nautilus orca xdg-user-dirs-gtk simple-scan gnome-calculator gnome-contacts rhythmbox \
+                                      gnome-themes-extra gnome-shell-extension-appindicator gnome-tweaks gnome-calendar deja-dup gnome-terminal \
+                                      system-config-printer modemmanager nautilus-image-converter nautilus-sendto nautilus-share gnome-shell-extension-gtile \
+                                      gnome-icon-theme-extras dconf-editor eog remmina libsass parallel sassc gtk-engine-murrine fd gedit gstreamer gst-libav \
+                                      gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme
+
+arch chroot /mnt systemctl enable gdm
