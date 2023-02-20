@@ -99,6 +99,3 @@ arch-chroot /mnt pacman -S --noconfirm --needed gdm gnome-shell gnome-background
                                       gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme
 
 arch-chroot /mnt systemctl enable gdm
-
-
-reboot
