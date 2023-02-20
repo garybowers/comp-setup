@@ -6,13 +6,13 @@ read DISK
 echo "What is the name of the computer?"
 read COMPNAME
 
-read "Root password: "
+echo "Root password: "
 read ROOTPASSWORD
 
-read "Username of the user: "
+echo "Username of the user: "
 read USERNAME
 
-read "Password of the user: "
+echo "Password of the user: "
 read USERPASSWORD
 
 echo $DISK
