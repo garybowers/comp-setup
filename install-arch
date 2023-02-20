@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+export DISK=vda
+export COMPNAME=gb2-vdi
+export EFI=true
+
+
+echo $DISK
+echo $COMPNAME
+echo $EFI
+
+pacman-key --init
+pacman-key --populate arch-linux
+pacman -Sy --noconfirm archlinux-keyring
+
+timedatectl set-ntp true
+
+parted /dev/vda mklabel gpt \
+	mkpart ESP fat32 1Mib 512Mib \
+	mkpart BOOT ext4 512Mib 1024Mib \
+	mkpart ROOT ext4 1GiB 100% --script
+
+parted /dev/vda set 1 esp on --script
+
+mkfs.ext4 -L root /dev/vda3
+mkfs.ext4 -L boot /dev/vda2
+mkfs.vfat -n "EFI SYSTEM" /dev/vda1
+
+mount /dev/vda3 /mnt
+mkdir /mnt/boot
+mount /dev/vda2 /mnt/boot
+mkdir /mnt/boot/efi
+mount /dev/vda1 /mnt/boot/efi
+
+dd if=/dev/zero of=/mnt/swap bs=1M count=4096
+chmod 0600 /mnt/swap
+mkswap /mnt/swap
+swapon /mnt/swap
+
+pacstrap -i /mnt base base-devel linux linux-firmware networkmanager efibootmgr grub sudo vi vim bash bash-completion git
+
+arch-chroot /mnt/arch 
+arch-chroot /mnt/arch mkinitcpio -p linux
+
