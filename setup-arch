@@ -58,7 +58,7 @@ fi
 sudo pacman -S --noconfirm --needed wpa_supplicant dnsmasq openresolv nss-mdns wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils
 
 # Install Audio Stack
-sudo pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire-jack pipewire-alsa
+sudo pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire-jack pipewire-alsa cmus
 
 # Install Print Services
 sudo pacman -S --noconfirm --needed cups cups-pdf
@@ -123,10 +123,13 @@ sudo chmod +x /usr/local/bin/aurinst
 # Fix mdns printing
 sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf 
 
-# install development and user tools
-sudo pacman -S --noconfirm --needed git tig byobu libxss python-setuptools mesa-demos yelp-tools check meson gobject-introspection glxinfo python-dbus qemu virt-manager virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat python-dbusmock rust docker go typescript just libqalculate leafpad
+# install build tools
+sudo pacman -S --noconfirm --needed cmake gi-docgen gtk-doc valgrind vala help2man umockdev noto-fonts-cjk python-pillow gnu-efi-libs
 
-aurinst libfirmware-manager
+# install development and user tools
+sudo pacman -S --noconfirm --needed git tig byobu libxss python-setuptools mesa-demos yelp-tools check meson gobject-introspection glxinfo python-dbus qemu virt-manager virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat python-dbusmock rust docker go typescript just libqalculate leafpad 
+
+#aurinst libfirmware-manager
 
 sudo usermod -aG docker $USER
 sudo usermod -aG libvirt $USER
@@ -279,5 +282,8 @@ sudo chown gary:gary /tmp/aur
 aurinst google-chrome
 aurinst sublime-text-4 
 
-cd /tmp && curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-392.0.0-linux-x86_64.tar.gz && \
-        tar -xf google-cloud-cli-392.0.0-linux-x86_64.tar.gz && sudo mv /tmp/google-cloud-sdk /opt
+
+export GCLOUD_VER=419.0.0
+cd /tmp && curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_VER}-linux-x86_64.tar.gz && \
+	sudo rm -rf /opt/google-cloud-sdk && \
+	tar -xf google-cloud-cli-${GCLOUD_VER}-linux-x86_64.tar.gz && sudo mv /tmp/google-cloud-sdk /opt
