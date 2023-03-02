@@ -159,7 +159,7 @@ sudo systemctl enable --now tlp
 ######## GNOME ########
 if [ "$1" == "gnome" ]; then 
   echo "Installing $1"
-  sudo pacman -S --noconfirm --needed gdm gnome-shell gnome-backgrounds gnome-color-manager gnome-disk-utility gnome-font-viewer gnome-menus \
+  sudo pacman -S --noconfirm --needed gdm gnome-shell gnome-control-center gnome-backgrounds gnome-color-manager gnome-disk-utility gnome-font-viewer gnome-menus \
                                       gnome-remote-desktop gnome-screenshot gnome-shell-extensions gnome-software gnome-system-monitor gnome-connections \
                                       gnome-user-share mutter nautilus orca xdg-user-dirs-gtk simple-scan gnome-calculator gnome-contacts rhythmbox \
                                       gnome-themes-extra gnome-shell-extension-appindicator gnome-tweaks gnome-calendar deja-dup gnome-terminal \
