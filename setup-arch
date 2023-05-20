@@ -46,7 +46,7 @@ fi
 echo Platform: $PLATFORM
 
 # Install Xorg and hardware drivers
-sudo pacman -S --noconfirm --needed xorg xorg-xinit tlp dmidecode xdg-utils intltool linux-headers acpi_call acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon lshw
+sudo pacman -S --noconfirm --needed xorg xorg-xinit tlp dmidecode xdg-utils intltool linux-headers acpi_call acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon lshw fprint
 
 # Install Bluetooth Stack
 if [ "$PLATFORM" != "QEMU" ]; then
