@@ -71,7 +71,7 @@ sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu xorg-
                                     ttf-opensans ttf-roboto-mono ttf-roboto
 
 # Install Applications
-sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree xterm git 
+sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree xterm git ncdu borg python-llfuse 
 
 # Install standard applications
 sudo pacman -S --noconfirm --needed firefox thunderbird libreoffice thunderbird gimp keepassxc android-file-transfer
@@ -157,13 +157,14 @@ sudo systemctl enable --now tlp
 ######## GNOME ########
 if [ "$1" == "gnome" ]; then 
   echo "Installing $1"
-  sudo pacman -S --noconfirm --needed gdm gnome-shell gnome-control-center gnome-backgrounds gnome-color-manager gnome-disk-utility gnome-font-viewer gnome-menus \
-                                      gnome-remote-desktop gnome-screenshot gnome-shell-extensions gnome-software gnome-system-monitor gnome-connections \
-                                      gnome-user-share mutter nautilus orca xdg-user-dirs-gtk simple-scan gnome-calculator gnome-contacts rhythmbox \
+  sudo pacman -S --noconfirm --needed gdm gnome-shell gnome-control-center gnome-backgrounds gnome-color-manager gnome-disk-utility \
+				      gnome-font-viewer gnome-menus gnome-remote-desktop gnome-screenshot gnome-shell-extensions \
+				      gnome-software gnome-system-monitor gnome-connections gnome-user-share \
+				      mutter nautilus orca xdg-user-dirs-gtk simple-scan gnome-calculator gnome-contacts rhythmbox \
                                       gnome-themes-extra gnome-shell-extension-appindicator gnome-tweaks gnome-calendar deja-dup gnome-terminal \
                                       system-config-printer modemmanager nautilus-image-converter nautilus-sendto nautilus-share gnome-shell-extension-gtile \
                                       gnome-icon-theme-extras dconf-editor eog remmina libsass parallel sassc gtk-engine-murrine fd gedit gstreamer gst-libav \
-                                      gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme geary
+                                      gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme geary gvfs gvfs-nfs gvfs-smb gvfs-goa
 
   aurinst ttf-roboto-slab
   aurinst pop-icon-theme-git
@@ -276,7 +277,9 @@ sudo flatpak install -y flathub \
 	app/io.github.Hexchat/x86_64/stable \
 	com.obsproject.Studio \
 	com.valvesoftware.Steam \
-  im.riot.Riot
+	im.riot.Riot \
+	org.telegram.desktop \
+	org.telegram.desktop.webview
 
 sudo chown gary:gary /tmp/aur
 aurinst google-chrome
