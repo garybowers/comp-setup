@@ -245,7 +245,8 @@ fi
 if [ "$1" == "kde" ]; then
   echo "INSTALLING $1"
   sudo pacman -S --noconfirm --needed sddm plasma-desktop konsole dolphin dolphin-plugins baloo kmix kate kcalc kdeconnect kmail kompare krdc krfb \
-                                      kwalletmanager okular partitionmanager spectacle bluedevil plasma-workspace-wallpapers kscreen bluedevil powerdevil
+                                      kwalletmanager okular partitionmanager spectacle bluedevil plasma-workspace-wallpapers kscreen bluedevil \
+                                      powerdevil plasma-nm discover deepin-wallpapers-plasma kdeplasma-addons kinfocenter oxygen plasma-disks 
   sudo systemctl enable sddm.service
 fi
 
