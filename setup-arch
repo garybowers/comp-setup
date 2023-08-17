@@ -66,10 +66,13 @@ sudo pacman -S --noconfirm --needed cups cups-pdf
 sudo systemctl enable --now cups.socket
 
 # Install Fonts
-sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu xorg-fonts-misc xorg-fonts-type1 \
-                                    noto-fonts noto-fonts-extra noto-fonts-emoji ttf-carlito ttf-croscore ttf-hack ttf-anonymous-pro \
-                                    ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono \
-                                    ttf-opensans ttf-roboto-mono ttf-roboto
+echo "Install fonts:"
+sudo pacman -S --noconfirm --needed \
+        ttf-ibm-plex ttf-liberation ttf-dejavu xorg-fonts-misc xorg-fonts-type1 \
+        noto-fonts noto-fonts-extra noto-fonts-emoji ttf-carlito ttf-croscore ttf-hack ttf-anonymous-pro \
+        ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono \
+        ttf-opensans ttf-roboto-mono ttf-roboto ttf-ubuntu-font-family ttf-inconsolata texlive-fontsextra 
+                                    
 
 # Install Applications
 sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree xterm git ncdu borg python-llfuse 
@@ -284,8 +287,10 @@ sudo flatpak install -y flathub \
 	org.telegram.desktop.webview
 
 sudo chown gary:gary /tmp/aur
+
+### Install some applications from the AUR
 aurinst google-chrome
-aurinst sublime-text-4 
+aurinst sublime-text-4
 
 
 export GCLOUD_VER=419.0.0
