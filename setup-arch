@@ -47,7 +47,11 @@ fi
 echo Platform: $PLATFORM
 
 # Install Xorg and hardware drivers
-sudo pacman -S --noconfirm --needed xorg xorg-xinit tlp dmidecode xdg-utils intltool linux-headers acpi_call acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon lshw fprint
+sudo pacman -S --noconfirm --needed xorg xorg-xinit tlp dmidecode xdg-utils intltool linux-headers acpi_call \
+	                            acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon lshw fprint
+
+# Install Audio Stack
+sudo pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire-jack pipewire-alsa cmus
 
 # Install Bluetooth Stack
 if [ "$PLATFORM" != "QEMU" ]; then
@@ -57,9 +61,6 @@ fi
 
 # Install Network Stack
 sudo pacman -S --noconfirm --needed wpa_supplicant dnsmasq openresolv nss-mdns wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils
-
-# Install Audio Stack
-sudo pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire-jack pipewire-alsa cmus
 
 # Install Print Services
 sudo pacman -S --noconfirm --needed cups cups-pdf
@@ -72,7 +73,6 @@ sudo pacman -S --noconfirm --needed \
         noto-fonts noto-fonts-extra noto-fonts-emoji ttf-carlito ttf-croscore ttf-hack ttf-anonymous-pro \
         ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono \
         ttf-opensans ttf-roboto-mono ttf-roboto ttf-ubuntu-font-family ttf-inconsolata texlive-fontsextra 
-                                    
 
 # Install Applications
 sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree xterm git ncdu borg python-llfuse 
@@ -131,7 +131,9 @@ sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhos
 sudo pacman -S --noconfirm --needed cmake gi-docgen gtk-doc valgrind vala help2man umockdev noto-fonts-cjk python-pillow gnu-efi-libs
 
 # install development and user tools
-sudo pacman -S --noconfirm --needed tig byobu libxss python-setuptools mesa-demos yelp-tools check meson gobject-introspection glxinfo python-dbus qemu virt-manager virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat \
+sudo pacman -S --noconfirm --needed tig byobu libxss python-setuptools mesa-demos yelp-tools check meson \
+	                            gobject-introspection glxinfo python-dbus qemu-desktop virt-manager \
+				    virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat \
                                     python-dbusmock rust docker go typescript just libqalculate leafpad cmake
 sudo usermod -aG docker $USER
 sudo usermod -aG libvirt $USER
@@ -146,7 +148,7 @@ EOF'
 
 sudo systemctl enable --now avahi-daemon.service
 sudo systemctl enable --now dnsmasq.service
-sudo systemctl enable --now ebtables.service
+#sudo systemctl enable --now ebtables.service
 sudo systemctl enable --now libvirtd.service
 sudo systemctl enable --now sshd.service
 sudo systemctl enable --now ufw.service
