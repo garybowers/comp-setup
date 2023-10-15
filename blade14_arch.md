@@ -217,7 +217,7 @@ edit this to the following:
 `GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 nvidia-drm.modeset=1"` (don't forget the quotes)
 
 Locate the line with `GRUB_CMDLINE_LINUX=""` and change to read:
-`GRUB_CMDLINE_LINUX="cryptdevice=/dev/nvme0n1p3:luks_root"`
+`GRUB_CMDLINE_LINUX="cryptdevice=/dev/nvme0n1p3:luks_root root=/dev/VolGroup/root"`
 
 Save and exit with escape :wq
 
@@ -231,7 +231,14 @@ grub-mkconfig -o /boot/efi/EFI/arch/grub.cfg
 
 ##### Initramfs
 
-Edit the `/etc/mkinitcpio.conf` file and look for the `HOOKS=` section, after the `block` entry add the entry `encrypt`
+Edit the `/etc/mkinitcpio.conf` file and look for the `HOOKS=` section, after the `block` entry add the entry `encrypt` and `lvm2`
+
+e.g.
+
+```
+HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block encrypt lvm2 filesystems fsck)
+```
+
 Save and exit
 
 Execute `mkinitcpio -p linux`
