@@ -57,10 +57,11 @@ sudo pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire
 if [ "$PLATFORM" != "QEMU" ]; then
 sudo pacman -S --noconfirm --needed bluez blueman
 sudo systemctl enable --now bluetooth.service
+sudo sed -i 's/\#Experimental\ \=\ false/Experimental\ =\ true/g' /etc/bluetooth/main.conf
 fi
 
 # Install Network Stack
-sudo pacman -S --noconfirm --needed wpa_supplicant dnsmasq openresolv nss-mdns wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils
+sudo pacman -S --noconfirm --needed wpa_supplicant dnsmasq openresolv nss-mdns wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils nfs-utils
 
 # Install Print Services
 sudo pacman -S --noconfirm --needed cups cups-pdf
