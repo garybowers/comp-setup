@@ -39,17 +39,17 @@ pacman -Sy archlinux-keyring
 
 ### Stage 2.1 - Disks
 
-##### 1.  Prepare for full disk encryption
+##### 2.1.1  Prepare for full disk encryption
 
 `modprobe dm-crypt` + `modprobe dm-mod`
 
-##### 2.  Partition your disk (This will erase everything!)
+##### 2.1.2  Partition your disk (This will erase everything!)
 
 To get your ssd device name  e.g. `nvme0n1` use the `lsblk` command
 
 run `fdisk /dev/nvme0n1`
 
-now delete all the partitions by pressing `d` until you have no partitions left, then press `w`
+now delete all the partitions by pressing `d` until you have no partitions left, then press `w` to commit the changes to the disk.
 
 Create your new partitions
 
@@ -61,13 +61,13 @@ Press `n` to create a new parition
 Layout:
 	Partition number: **1**
 	Starting Block: leave as default
-	Finish Block: `+1GB`
+	Finish Block: `+512mb`
 	Type: 1 (EFI System)
 	Dev: /dev/nvme0n1p1
 
 	Partition number: **2**
 	Starting Block: leave as default
-	Finish Block: `+1GB`
+	Finish Block: `+512mb`
 	Type: 20 (Linux filesystem)
 	Dev: /dev/nvme0n1p2
 
@@ -78,7 +78,7 @@ Layout:
 	Dev: /dev/nvme0n1p3
 ```
 
-##### 3.  Setup LUKS Encryption
+##### 2.1.3  Setup LUKS Encryption
 	
 To set up the encrypted filesystem run:
 
@@ -92,7 +92,26 @@ Once you follow the instructions and entered a passsword open the disk:
 cryptsetup open /dev/nvme0n1p3 luks_root
 ```
 
-##### 4.  Format the paritions
+##### 2.1.4  Create the volume groups and logical volumes
+
+Create the volume groups
+
+```
+pvcreate /dev/mapper/luks_root
+```
+
+```
+vgcreate VolGroup /dev/mapper/luks_root
+```
+
+Now create the logical volumes
+
+```
+lvcreate -L 16G VolGroup -n swap
+lvcreate -l 100%FREE VolGroup -n root
+```
+
+##### 2.1.5  Format the paritions
 
 Format the EFI System Partition as FAT
 
@@ -109,33 +128,29 @@ mkfs.ext4 -L boot /dev/nvme0n1p2
 Format the Root partition as EXT4
 
 ```
-mkfs.ext4 -L root /dev/mapper/luks_root
+mkfs.ext4 -L root /dev/VolGroup/root
 ```
 
-##### 5.  Mount the disks for installation
+Enable swap
+
+```
+mkswap /dev/VolGroup/swap
+swapon /dev/VolGroup/swap
+```
+
+##### 2.1.6  Mount the disks for installation
 
 ```
 mount /dev/mapper/luks_root /mnt
-mkdir /mnt/boot
-mount /dev/nvme0n1p2 /mnt/boot
-mkdir /mnt/boot/efi
-mount /dev/nvme0n1p1 /mnt/boot/efi
+mount --mkdir /dev/nvme0n1p2 /mnt/boot
+mount --mkdir /dev/nvme0n1p1 /mnt/boot/efi
 ```
 
-##### 6.  Create the swap file on the encrypted volume
-
-```
-cd /mnt
-dd if=/dev/zero of=swap bs=1M count=8192
-chmod 0600 swap
-mkswap swap
-swapon swap
-```
 
 ### Stage 2.2 - Install the base arch system
 
 ```
-pacstrap -i /mnt base base-devel efibootmgr grub linux linux-firmware networkmanager sudo vi vim bash bash-completion nvidia amd-ucode
+pacstrap -i /mnt base base-devel efibootmgr grub linux linux-firmware networkmanager sudo vi vim bash bash-completion nvidia amd-ucode lvm2
 ```
 	
 Now generate the fstab based on the layout in /mnt
@@ -166,7 +181,7 @@ echo 'KEYMAP=en_GB' >> /etc/vconsole.conf
 ##### Set the language
 
 ```
-echo 'LANG=en_GB.UTF8' >> /etc/locale.conf
+echo 'LANG=en_GB.UTF-8' >> /etc/locale.conf
 ```
 
 ##### Set the locale
