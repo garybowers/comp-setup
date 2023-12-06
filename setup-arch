@@ -48,7 +48,7 @@ echo Platform: $PLATFORM
 
 # Install Xorg and hardware drivers
 sudo pacman -S --noconfirm --needed xorg xorg-xinit tlp dmidecode xdg-utils intltool linux-headers acpi_call \
-	                            acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon lshw fprint
+	                            acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon lshw fprintd
 
 # Install Audio Stack
 sudo pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire-jack pipewire-alsa cmus
@@ -125,6 +125,24 @@ rm -rf /tmp/aur
 EOF'
 sudo chmod +x /usr/local/bin/aurinst
 
+# Add intermediate ca cert
+sudo touch /etc/ca-certificates/trust-source/anchors/b1-int.crt
+sudo bash -c 'cat << EOF > /etc/ca-certificates/trust-source/anchors/b1-int.crt
+-----BEGIN CERTIFICATE-----
+MIIBxTCCAWugAwIBAgIRAOXhNfpes999inSG8vDHN9swCgYIKoZIzj0EAwIwLDEQ
+MA4GA1UEChMHYm93ZXJzMTEYMBYGA1UEAxMPYm93ZXJzMSBSb290IENBMB4XDTIz
+MTAxNzEwMTMxMVoXDTMzMTAxNDEwMTMxMVowNDEQMA4GA1UEChMHYm93ZXJzMTEg
+MB4GA1UEAxMXYm93ZXJzMSBJbnRlcm1lZGlhdGUgQ0EwWTATBgcqhkjOPQIBBggq
+hkjOPQMBBwNCAATRX7NovkKvA/yIgAMBhdcKZx3AmE/dQyI5RxmG5StH21HcCQ6p
+MmxPc8de/ZsU6tMaS+m+77SnIxmJF6932mWXo2YwZDAOBgNVHQ8BAf8EBAMCAQYw
+EgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUyY9w2vKv+/qTqR5a7t/aDYhD
+1GYwHwYDVR0jBBgwFoAUmL0cS0h1Wgqceb33bULMKELW3zUwCgYIKoZIzj0EAwID
+SAAwRQIgWlp024IxTnDtGuRTb4NKtP76e23P5NEMlaH5jYg6IhACIQDesnJxjvtU
+NFj/moNHOw3Izna3lsVlTtCVtSnDDzjhmw==
+-----END CERTIFICATE-----
+EOF'
+sudo update-ca-trust
+
 # Fix mdns printing
 sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf 
 
@@ -133,7 +151,7 @@ sudo pacman -S --noconfirm --needed cmake gi-docgen gtk-doc valgrind vala help2m
 
 # install development and user tools
 sudo pacman -S --noconfirm --needed tig byobu libxss python-setuptools mesa-demos yelp-tools check meson \
-	                            gobject-introspection glxinfo python-dbus qemu-desktop virt-manager \
+	                            gobject-introspection glxinfo python-dbus qemu-desktop virt-manager swtpm \
 				    virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat \
                                     python-dbusmock rust docker go typescript just libqalculate leafpad cmake
 sudo usermod -aG docker $USER
@@ -171,7 +189,7 @@ if [ "$1" == "gnome" ]; then
                                       gnome-themes-extra gnome-shell-extension-appindicator gnome-tweaks gnome-calendar deja-dup gnome-terminal \
                                       system-config-printer modemmanager nautilus-image-converter nautilus-sendto nautilus-share gnome-shell-extension-gtile \
                                       gnome-icon-theme-extras dconf-editor eog remmina libsass parallel sassc gtk-engine-murrine fd gedit gstreamer gst-libav \
-                                      gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme geary gvfs gvfs-nfs gvfs-smb gvfs-goa
+                                      gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme geary gvfs gvfs-nfs gvfs-smb gvfs-goa evince
 
   aurinst ttf-roboto-slab
   aurinst pop-icon-theme-git
@@ -287,7 +305,8 @@ sudo flatpak install -y flathub \
 	com.valvesoftware.Steam \
 	im.riot.Riot \
 	org.telegram.desktop \
-	org.telegram.desktop.webview
+	org.telegram.desktop.webview \
+	com.bitwarden.desktop
 
 sudo chown gary:gary /tmp/aur
 
