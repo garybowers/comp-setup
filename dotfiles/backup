@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+
+echo ==============================================================
+echo Backing up 
+echo $TIMESTAMP
+echo ==============================================================
+
+#rsync -ravh --progress \
+#	--exclude '.var/app/com.spotify.Client' \
+#	--exclude '.var/app/com.valvesoftware.Steam' \
+#	--exclude '.cache/mesa_shader_cache' \
+#	--exclude '.cache/go-build' \
+#	--exclude 'Videos' \
+#	--exclude 'Music' \
+#	--exclude 'mnt' \
+#	 $SOURCE $DESTINATION --delete
+
+export BORG_PASSPHRASE='equinox@@@@2510'
+borg create -spv ssh://backup/backup/{hostname}::home-$TIMESTAMP $HOME \
+	--exclude '/home/gary/.var/app/com.spotify.Client' \
+	--exclude '/home/gary/.var/app/com.valvesoftware.Steam' \
+	--exclude '/home/gary/.cache/mesa_shader_cache' \
+	--exclude '/home/gary/.cache/go-build' \
+	--exclude '/home/gary/mnt'
+        #\--exclude '/home/gary/Music' 
+        #\ --exclude '/home/gary/Videos'	
