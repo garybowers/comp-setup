@@ -187,7 +187,7 @@ if [ "$1" == "gnome" ]; then
 				      gnome-software gnome-system-monitor gnome-connections gnome-user-share xdg-desktop-portal-gnome \
 				      mutter nautilus orca xdg-user-dirs-gtk simple-scan gnome-calculator gnome-contacts rhythmbox \
                                       gnome-themes-extra gnome-shell-extension-appindicator gnome-tweaks gnome-calendar deja-dup gnome-terminal \
-                                      system-config-printer modemmanager nautilus-image-converter nautilus-sendto nautilus-share gnome-shell-extension-gtile \
+                                      system-config-printer modemmanager nautilus-image-converter nautilus-sendto nautilus-share \
                                       gnome-icon-theme-extras dconf-editor eog remmina libsass parallel sassc gtk-engine-murrine fd gedit gstreamer gst-libav \
                                       gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme geary gvfs gvfs-nfs gvfs-smb gvfs-goa evince
 
@@ -199,7 +199,7 @@ if [ "$1" == "gnome" ]; then
   #aurinst gnome-shell-extension-pop-shell-git
   aurinst gnome-shell-extension-no-overview
   aurinst gnome-shell-extension-dash-to-dock
-  aurinst gnome-shell-extension-desktop-icons-ng
+  #aurinst gnome-shell-extension-desktop-icons-ng
   aurinst gnome-shell-extension-gsconnect
 
   gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark
@@ -227,7 +227,7 @@ if [ "$1" == "gnome" ]; then
   gnome-extensions enable apps-menu@gnome-shell-extensions.gcampax.github.com
   gnome-extensions enable no-overview@fthx
   gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
-  gnome-extensions enable workspace-indicator@gnome-shell-extensions.gcampax.github.com
+  #gnome-extensions enable workspace-indicator@gnome-shell-extensions.gcampax.github.com
   gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com
   gnome-extensions disable dash-to-dock@micxgx.gmail.com
   gnome-extensions enable apps-menu@gnome-shell-extensions.gcampax.github.com
