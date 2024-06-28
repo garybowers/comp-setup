@@ -189,7 +189,7 @@ if [ "$1" == "gnome" ]; then
 
   sudo pacman -S --noconfirm --needed gnome-software gnome-system-monitor xdg-user-dirs-gtk simple-scan gnome-calculator gnome-contacts rhythmbox \
                                       gnome-themes-extra gnome-shell-extension-appindicator gnome-calendar deja-dup \
-                                      nautilus-image-converter nautilus-sendto nautilus-share \
+                                      nautilus-image-converter nautilus-share sushi \
                                       remmina libsass parallel sassc gtk-engine-murrine fd gedit gstreamer gst-libav \
                                       gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme geary gvfs gvfs-nfs gvfs-smb gvfs-goa evince yelp \
                                       gst-plugins-good gst-plugin-pipewire
