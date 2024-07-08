@@ -35,26 +35,27 @@ function aurinst {
 sudo pacman -S --noconfirm --needed dmidecode reflector
 sudo systemctl enable --now reflector
 
-PLATFORM=$(sudo dmidecode -s system-manufacturer)
+MANUFACTURER=$(sudo dmidecode -s system-manufacturer)
 GPU=$(lspci | grep -i '.* vga .* nvidia .*')
+
 shopt -s nocasematch
 
 if [[ $GPU == *' nvidia '* ]]; then
   printf 'Nvidia GPU is present:  %s\n' "$gpu"
-  sudo pacman -S --noconfirm --needed nvidia nvidia-settings
+  sudo pacman -S --noconfirm --needed nvidia nvidia-settings nvidia-dkms nvidia-utils
 fi
 
-echo Platform: $PLATFORM
+echo MANUFACTURER: $MANUFACTURER
 
 # Install Xorg and hardware drivers
-sudo pacman -S --noconfirm --needed xorg xorg-xinit tlp dmidecode xdg-utils intltool linux-headers acpi_call \
-	                            acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon lshw fprintd
+sudo pacman -S --noconfirm --needed xorg xorg-xinit xdg-utils intltool linux-headers acpi_call \
+	                            acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon vulkan-intel lshw fprintd nvtop
 
 # Install Audio Stack
 sudo pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire-jack pipewire-alsa cmus
 
 # Install Bluetooth Stack
-if [ "$PLATFORM" != "QEMU" ]; then
+if [ "$MANUFACTURER" != "QEMU" ]; then
 sudo pacman -S --noconfirm --needed bluez blueman
 sudo systemctl enable --now bluetooth.service
 sudo sed -i 's/\#Experimental\ \=\ false/Experimental\ =\ true/g' /etc/bluetooth/main.conf
@@ -84,7 +85,7 @@ sudo pacman -S --noconfirm --needed firefox thunderbird libreoffice thunderbird 
 sleep 4
 
 if [ "$PLATFORM" == "QEMU" ]; then
-sudo pacman -S --noconfirm --needed spice-vdagent
+sudo pacman -S --noconfirm --needed spice-vdagent vulkan-virtio
 sudo systemctl enable spice-vdagentd
 fi
 
