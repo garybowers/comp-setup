@@ -275,11 +275,11 @@ if [ "$1" == "kde" ]; then
   echo "INSTALLING $1"
   ## Base KDE Packages
 
-  sudo pacman -S --noconfirm --needed sddm plasma-desktop konsole dolphin dolphin-plugins
+  sudo pacman -S --noconfirm --needed sddm plasma-desktop konsole dolphin dolphin-plugins plasma-nm kmix discover kscreen
 
-  sudo pacman -S --noconfirm --needed baloo kmix kate kcalc kdeconnect kmail kompare krdc krfb \
-                                      kwalletmanager okular partitionmanager spectacle bluedevil plasma-workspace-wallpapers kscreen bluedevil \
-                                      powerdevil plasma-nm discover deepin-wallpapers-plasma kdeplasma-addons kinfocenter oxygen plasma-disks 
+  sudo pacman -S --noconfirm --needed baloo kate kcalc kdeconnect kmail kompare krdc krfb \
+                                      kwalletmanager okular partitionmanager spectacle bluedevil plasma-workspace-wallpapers bluedevil \
+                                      powerdevil discover plasma-workspace-wallpapers kdeplasma-addons kinfocenter oxygen plasma-disks 
   sudo systemctl enable sddm.service
 fi
 
