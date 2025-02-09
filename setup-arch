@@ -49,10 +49,10 @@ echo MANUFACTURER: $MANUFACTURER
 
 # Install Xorg and hardware drivers
 sudo pacman -S --noconfirm --needed xorg xorg-xinit xdg-utils intltool linux-headers acpi_call \
-	                            acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon vulkan-intel lshw fprintd nvtop
+	                            acpid fwupd libva-mesa-driver mesa-vdpau mesa vulkan-mesa-layers vulkan-radeon vulkan-intel lshw fprintd nvtop power-profiles-daemon
 
 # Install Audio Stack
-sudo pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire-jack pipewire-alsa cmus
+sudo pacman -S --noconfirm --needed pavucontrol pipewire pipewire-pulse pipewire-jack pipewire-alsa cmus vlc
 
 # Install Bluetooth Stack
 if [ "$MANUFACTURER" != "QEMU" ]; then
@@ -168,17 +168,15 @@ EOF'
 
 sudo systemctl enable --now avahi-daemon.service
 sudo systemctl enable --now dnsmasq.service
-#sudo systemctl enable --now ebtables.service
 sudo systemctl enable --now libvirtd.service
 sudo systemctl enable --now sshd.service
 sudo systemctl enable --now ufw.service
 sudo systemctl enable --now acpid.service
+sudo systemctl enable --now power-profiles-daemon.service
 
-## TLP Setup
+## RKFill
 sudo systemctl mask systemd-rfkill.service
 sudo systemctl mask systemd-rfkill.socket
-sudo systemctl enable --now tlp
-
 
 ######## GNOME ########
 if [ "$1" == "gnome" ]; then 
@@ -193,7 +191,7 @@ if [ "$1" == "gnome" ]; then
                                       nautilus-image-converter nautilus-share sushi \
                                       remmina libsass parallel sassc gtk-engine-murrine fd gedit gstreamer gst-libav \
                                       gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme geary gvfs gvfs-nfs gvfs-smb gvfs-goa evince yelp \
-                                      gst-plugins-good gst-plugin-pipewire
+                                      gst-plugins-good gst-plugin-pipewire cheese gnome-music gnome-boxes gnome-characters gnome-chess gnome-clocks ukui-wallpapers
 
   aurinst ttf-roboto-slab
   aurinst pop-icon-theme-git
@@ -306,8 +304,6 @@ fi
 sudo flatpak install -y flathub \
 	spotify \
 	slack \
-	cheese \
-	app/org.videolan.VLC/x86_64/stable \
 	app/io.github.Hexchat/x86_64/stable \
 	com.obsproject.Studio \
 	com.valvesoftware.Steam \
