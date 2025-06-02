@@ -13,7 +13,7 @@
 
 echo Installing arch with desktop environment: $1
 sudo systemctl enable --now NetworkManager
-sleep 2 
+sleep 2
 
 # Get the latest package keys for pacman
 sudo pacman-key --populate
@@ -29,7 +29,7 @@ function aurinst {
 		rm -rf /tmp/aur/$1
 	fi
 	cd /tmp/aur && git clone https://aur.archlinux.org/$1.git && cd $1 && yes | makepkg -sic --needed
-	rm -rf /tmp/aur/$1 
+	rm -rf /tmp/aur/$1
 }
 
 sudo pacman -S --noconfirm --needed dmidecode reflector
@@ -74,10 +74,10 @@ sudo pacman -S --noconfirm --needed \
         ttf-ibm-plex ttf-liberation ttf-dejavu xorg-fonts-misc xorg-fonts-type1 \
         noto-fonts noto-fonts-extra noto-fonts-emoji ttf-carlito ttf-croscore ttf-hack ttf-anonymous-pro \
         ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono \
-        ttf-opensans ttf-roboto-mono ttf-roboto ttf-ubuntu-font-family ttf-inconsolata texlive-fontsextra 
+        ttf-opensans ttf-roboto-mono ttf-roboto ttf-ubuntu-font-family ttf-inconsolata texlive-fontsextra
 
 # Install Applications
-sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree xterm git ncdu borg python-llfuse 
+sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree xterm git ncdu borg python-llfuse
 
 # Install standard applications
 sudo pacman -S --noconfirm --needed firefox thunderbird libreoffice thunderbird gimp keepassxc android-file-transfer
@@ -93,11 +93,11 @@ fi
 # Add rule for printing by users
 sudo touch /etc/polkit-1/rules.d/49-allow-passwordless-printer-admin.rules
 sudo bash -c 'cat << EOF > /etc/polkit-1/rules.d/49-allow-passwordless-printer-admin.rules
-polkit.addRule(function(action, subject) { 
-    if (action.id == "org.opensuse.cupspkhelper.mechanism.all-edit" && 
-        subject.isInGroup("wheel")){ 
-        return polkit.Result.YES; 
-    } 
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.opensuse.cupspkhelper.mechanism.all-edit" &&
+        subject.isInGroup("wheel")){
+        return polkit.Result.YES;
+    }
 });
 EOF'
 
@@ -145,16 +145,17 @@ EOF'
 sudo update-ca-trust
 
 # Fix mdns printing
-sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf 
+sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf
 
 # install build tools
 sudo pacman -S --noconfirm --needed cmake gi-docgen gtk-doc valgrind vala help2man umockdev noto-fonts-cjk python-pillow gnu-efi-libs
 
 # install development and user tools
 sudo pacman -S --noconfirm --needed tig byobu libxss python-setuptools mesa-demos yelp-tools check meson \
-	                            gobject-introspection glxinfo python-dbus qemu-desktop virt-manager swtpm \
-				    virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat \
-                                    python-dbusmock rust docker docker-buildx go typescript just libqalculate leafpad cmake
+	                                gobject-introspection glxinfo python-dbus qemu-desktop virt-manager swtpm \
+									virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat \
+                                    python-dbusmock rust docker docker-buildx go typescript just libqalculate leafpad cmake \
+                                    zed code
 sudo usermod -aG docker $USER
 sudo usermod -aG libvirt $USER
 
@@ -179,16 +180,16 @@ sudo systemctl mask systemd-rfkill.service
 sudo systemctl mask systemd-rfkill.socket
 
 ######## GNOME ########
-if [ "$1" == "gnome" ]; then 
+if [ "$1" == "gnome" ]; then
   echo "Installing $1"
   # Base Gnome Packages
   sudo pacman -S --noconfirm --needed gdm gnome-shell gnome-control-center gnome-backgrounds gnome-color-manager gnome-disk-utility gnome-terminal \
-				      gnome-font-viewer gnome-menus gnome-remote-desktop gnome-screenshot gnome-shell-extensions mutter nautilus orca \
-                                      dconf-editor eog system-config-printer gnome-connections gnome-user-share xdg-desktop-portal-gnome gnome-tweaks 
+				                      gnome-font-viewer gnome-menus gnome-remote-desktop gnome-screenshot gnome-shell-extensions mutter nautilus orca \
+                                      dconf-editor eog system-config-printer gnome-connections gnome-user-share xdg-desktop-portal-gnome gnome-tweaks gnome-clocks
 
   sudo pacman -S --noconfirm --needed gnome-software gnome-system-monitor xdg-user-dirs-gtk simple-scan gnome-calculator gnome-contacts rhythmbox \
                                       gnome-themes-extra gnome-shell-extension-appindicator gnome-calendar deja-dup \
-                                      nautilus-image-converter nautilus-share sushi \
+                                      nautilus-image-converter nautilus-share sushi  gnome-shell-extension-desktop-icons-ng gnome-shell-extension-caffeine \
                                       remmina libsass parallel sassc gtk-engine-murrine fd gedit gstreamer gst-libav \
                                       gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme geary gvfs gvfs-nfs gvfs-smb gvfs-goa evince yelp \
                                       gst-plugins-good gst-plugin-pipewire cheese gnome-music gnome-boxes gnome-characters gnome-chess gnome-clocks ukui-wallpapers
@@ -201,7 +202,6 @@ if [ "$1" == "gnome" ]; then
   #aurinst gnome-shell-extension-pop-shell-git
   aurinst gnome-shell-extension-no-overview
   aurinst gnome-shell-extension-dash-to-dock
-  #aurinst gnome-shell-extension-desktop-icons-ng
   aurinst gnome-shell-extension-gsconnect
 
   gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark
@@ -277,7 +277,7 @@ if [ "$1" == "kde" ]; then
 
   sudo pacman -S --noconfirm --needed baloo kate kcalc kdeconnect kmail kompare krdc krfb \
                                       kwalletmanager okular partitionmanager spectacle bluedevil plasma-workspace-wallpapers bluedevil \
-                                      powerdevil discover plasma-workspace-wallpapers kdeplasma-addons kinfocenter oxygen plasma-disks 
+                                      powerdevil discover plasma-workspace-wallpapers kdeplasma-addons kinfocenter oxygen plasma-disks
   sudo systemctl enable sddm.service
 fi
 
