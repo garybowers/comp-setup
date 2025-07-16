@@ -161,6 +161,7 @@ sudo usermod -aG libvirt $USER
 
 ##### Install YAY #####
 sudo aurinst yay
+sudo yay --save --answerdiff None --answerclean None --removemake
 
 ##### FIX USB COPY HANGING #####
 sudo touch /etc/sysctl.d/99-sysctl.conf
