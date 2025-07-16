@@ -294,7 +294,12 @@ fi
 
 if [ "$1" == "hyprland" ]; then
   echo "INSTALLING $1"
-  sudo pacman -S --noconfirm --needed hyprland
+  sudo pacman -S --noconfirm --needed hyprland hypridle hyprlock rofi
+fi
+
+if [ "$1" == "cosmic" ]; then
+  echo "INSTALLING $1"
+  sudo pacman -S --noconfirm --needed cosmic
 fi
 
 if [ "$2" == "Y" ]; then
