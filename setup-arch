@@ -77,10 +77,10 @@ sudo pacman -S --noconfirm --needed \
         ttf-opensans ttf-roboto-mono ttf-roboto ttf-ubuntu-font-family ttf-inconsolata texlive-fontsextra
 
 # Install Applications
-sudo pacman -S --noconfirm --needed wget sudo neofetch mc htop flatpak rsync curl sshfs tree xterm git ncdu borg python-llfuse
+sudo pacman -S --noconfirm --needed wget sudo fastfetch mc htop flatpak rsync curl sshfs tree git ncdu borg python-llfuse
 
 # Install standard applications
-sudo pacman -S --noconfirm --needed firefox thunderbird libreoffice thunderbird gimp keepassxc android-file-transfer
+sudo pacman -S --noconfirm --needed firefox thunderbird libreoffice thunderbird gimp keepassxc android-file-transfer obs-studio
 
 sleep 4
 
@@ -152,12 +152,15 @@ sudo pacman -S --noconfirm --needed cmake gi-docgen gtk-doc valgrind vala help2m
 
 # install development and user tools
 sudo pacman -S --noconfirm --needed tig byobu libxss python-setuptools mesa-demos yelp-tools check meson \
-	                                gobject-introspection glxinfo python-dbus qemu-desktop virt-manager swtpm \
-									virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat \
-                                    python-dbusmock rust docker docker-buildx go typescript just libqalculate leafpad cmake \
-                                    zed code
+	                            gobject-introspection glxinfo python-dbus qemu-desktop virt-manager swtpm \
+                                    virt-viewer vde2 edk2-ovmf bridge-utils openbsd-netcat code neovim ghostty \
+                                    python-dbusmock rust docker docker-buildx go typescript just libqalculate leafpad cmake 
+                                    
 sudo usermod -aG docker $USER
 sudo usermod -aG libvirt $USER
+
+##### Install YAY #####
+sudo aurinst yay
 
 ##### FIX USB COPY HANGING #####
 sudo touch /etc/sysctl.d/99-sysctl.conf
@@ -184,7 +187,7 @@ if [ "$1" == "gnome" ]; then
   echo "Installing $1"
   # Base Gnome Packages
   sudo pacman -S --noconfirm --needed gdm gnome-shell gnome-control-center gnome-backgrounds gnome-color-manager gnome-disk-utility gnome-terminal \
-				                      gnome-font-viewer gnome-menus gnome-remote-desktop gnome-screenshot gnome-shell-extensions mutter nautilus orca \
+				      gnome-font-viewer gnome-menus gnome-remote-desktop gnome-screenshot gnome-shell-extensions mutter nautilus orca \
                                       dconf-editor eog system-config-printer gnome-connections gnome-user-share xdg-desktop-portal-gnome gnome-tweaks gnome-clocks
 
   sudo pacman -S --noconfirm --needed gnome-software gnome-system-monitor xdg-user-dirs-gtk simple-scan gnome-calculator gnome-contacts rhythmbox \
@@ -194,19 +197,15 @@ if [ "$1" == "gnome" ]; then
                                       gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme geary gvfs gvfs-nfs gvfs-smb gvfs-goa evince yelp \
                                       gst-plugins-good gst-plugin-pipewire cheese gnome-music gnome-boxes gnome-characters gnome-chess gnome-clocks ukui-wallpapers
 
-  aurinst ttf-roboto-slab
-  aurinst pop-icon-theme-git
-  aurinst pop-gtk-theme-git
-  aurinst pop-fonts
-  aurinst pop-theme
-  #aurinst gnome-shell-extension-pop-shell-git
-  aurinst gnome-shell-extension-no-overview
-  aurinst gnome-shell-extension-dash-to-dock
-  aurinst gnome-shell-extension-gsconnect
+  sudo yay -S --noconfirm ttf-roboto-slab gnome-shell-extension-no-overview gnome-shell-extension-dash-to-dock gnome-shell-extension-gsconnect
+  #aurinst pop-icon-theme-git
+  #aurinst pop-gtk-theme-git
+  #aurinst pop-fonts
+  #aurinst pop-theme
 
   gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark
   gsettings set org.gnome.desktop.interface enable-hot-corners false
-  gsettings set org.gnome.desktop.interface icon-theme 'Pop'
+  gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
   gsettings set org.gnome.desktop.interface clock-show-seconds true
   gsettings set org.gnome.desktop.interface clock-show-date true
   gsettings set org.gnome.desktop.interface show-battery-percentage true
@@ -293,8 +292,7 @@ if [ "$1" == "awesome" ]; then
 fi
 
 if [ "$2" == "Y" ]; then
-  aurinst optimus-manager
-  aurinst gdm-prime
+  yay -S --noconfirm optimus-manager gdm-prime
   sudo systemctl enable gdm
   sudo systemctl enable --now optimus-manager
   # Disable Wayland
@@ -305,7 +303,6 @@ sudo flatpak install -y flathub \
 	spotify \
 	slack \
 	app/io.github.Hexchat/x86_64/stable \
-	com.obsproject.Studio \
 	com.valvesoftware.Steam \
 	im.riot.Riot \
 	org.telegram.desktop \
@@ -315,11 +312,4 @@ sudo flatpak install -y flathub \
 sudo chown gary:gary /tmp/aur
 
 ### Install some applications from the AUR
-aurinst google-chrome
-aurinst sublime-text-4
-
-
-export GCLOUD_VER=419.0.0
-cd /tmp && curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_VER}-linux-x86_64.tar.gz && \
-	sudo rm -rf /opt/google-cloud-sdk && \
-	tar -xf google-cloud-cli-${GCLOUD_VER}-linux-x86_64.tar.gz && sudo mv /tmp/google-cloud-sdk /opt
+sudo yay -S --noconfirm -google-chrome sublime-text-4 google-cloud-cli
