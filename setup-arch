@@ -236,7 +236,7 @@ if [ "$1" == "gnome" ]; then
   gsettings set org.gnome.shell disable-user-extensions false
   gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink true
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed true
-  gsettings set org.gnome.shell.extensions.user-theme name 'Pop'
+  #gsettings set org.gnome.shell.extensions.user-theme name 'Pop'
   gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 '["<super>1"]'
   gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 '["<super>2"]'
@@ -290,6 +290,11 @@ fi
 if [ "$1" == "awesome" ]; then
   echo "INSTALLING $1"
   sudo pacman -S --noconfirm --needed awesome gdm
+fi
+
+if [ "$1" == "hyprland" ]; then
+  echo "INSTALLING $1"
+  sudo pacman -S --noconfirm --needed hyprland
 fi
 
 if [ "$2" == "Y" ]; then
