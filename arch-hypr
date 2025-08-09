@@ -33,7 +33,7 @@ sudo pacman -S --noconfirm --needed pipewire pipewire-audio pipewire-pulse pipew
 sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu noto-fonts noto-fonts-extra noto-fonts-emoji ttf-carlito ttf-croscore ttf-hack ttf-anonymous-pro ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono ttf-opensans ttf-roboto ttf-roboto-mono nerd-fonts otf-font-awesome
 
 # Install Hyprland
-sudo pacman -S --needed --noconfirm gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper dunst slurp grim swappy rofi waybar ghostty dolphin thunderbird firefox xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh
+sudo pacman -S --needed --noconfirm gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper dunst slurp grim swappy rofi waybar ghostty thunar thunar-volman tumbler thunar-media-tags-plugin thunar-archive-plugin firefox xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh
 
 # Install Apps
  sudo pacman -S --needed --noconfirm cmus libreoffice mpv mc evince
