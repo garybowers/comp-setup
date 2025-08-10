@@ -323,4 +323,4 @@ sudo flatpak install -y flathub \
 sudo chown gary:gary /tmp/aur
 
 ### Install some applications from the AUR
-sudo yay -S --noconfirm -google-chrome sublime-text-4 google-cloud-cli
+yay -S --noconfirm google-chrome sublime-text-4 google-cloud-cli
