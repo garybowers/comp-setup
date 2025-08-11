@@ -55,7 +55,7 @@ sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu noto-
 sudo pacman -S --needed --noconfirm ly gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper slurp grim swappy rofi waybar ghostty dolphin firefox xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh nwg-look swayng
 
 # Install Apps
-sudo pacman -S --needed --noconfirm cmus libreoffice mpv mc evince
+sudo pacman -S --needed --noconfirm cmus libreoffice mpv mc evince thunderbird
 yay -S --noconfirm --needed google-chrome sublime-text-4 google-cloud-cli
 
 sudo flatpak install -y flathub \
@@ -65,4 +65,6 @@ sudo flatpak install -y flathub \
 	im.riot.Riot \
 	org.telegram.desktop \
 	org.telegram.desktop.webview \
-	com.bitwarden.desktop
+	com.bitwarden.desktop \
+	app/com.usebruno.Bruno/x86_64/stable \
+	app/io.beekeeperstudio.Studio/x86_64/stable
