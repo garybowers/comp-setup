@@ -1,0 +1,11 @@
+font-size = 14
+background = #000000
+background-opacity = 0.92 
+cursor-style = block
+
+mouse-hide-while-typing = true
+
+theme = deep
+font-thicken = true
+window-colorspace = display-p3
+quick-terminal-animation-duration = 0.0
