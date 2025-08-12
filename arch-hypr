@@ -14,6 +14,9 @@ function aurinst {
 	rm -rf /tmp/aur/$1
 }
 
+# Set Timezone
+sudo ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+
 sudo pacman -Suy
 sudo pacman -S --noconfirm --needed power-profiles-daemon bluez bluez-utils blueman acpi_call linux-headers acpid fwupd mesa libva-mesa-driver mesa-vdpau vulkan-mesa-layers vulkan-intel vulkan-radeon fprintd intltool xdg-utils dbus brightnessctl ca-certificates jq dmidecode build-essential
 
