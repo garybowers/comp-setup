@@ -15,6 +15,10 @@ echo Installing arch with desktop environment: $1
 sudo systemctl enable --now NetworkManager
 sleep 2
 
+# Set the Timezone
+
+sudo ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+
 # Get the latest package keys for pacman
 sudo pacman-key --populate
 sudo pacman -Suy --noconfirm
