@@ -20,9 +20,7 @@ sudo ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 sudo pacman -Suy
 sudo pacman -S --noconfirm --needed power-profiles-daemon bluez bluez-utils blueman acpi_call linux-headers acpid fwupd mesa libva-mesa-driver mesa-vdpau vulkan-mesa-layers vulkan-intel vulkan-radeon fprintd intltool xdg-utils dbus brightnessctl ca-certificates jq dmidecode build-essential
 
-sudo pacman -S --noconfirm --needed wpa_supplicant dnsmasq openresolv nss-mdns wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils nfs-utils modemmanager avahi
-
-sudo pacman -S --noconfirm --needed wireguard-tools reflector openssh fastfetch btop rsync curl wget cups cups-pdf flatpak modemmanager modem-manager-gui
+sudo pacman -S --noconfirm --needed wpa_supplicant dnsmasq openresolv nss-mdns wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils nfs-utils modemmanager avahi wireguard-tools reflector openssh fastfetch btop rsync curl wget cups cups-pdf flatpak modemmanager modem-manager-gui
 
 sudo systemctl enable --now cups.socket
 
@@ -45,7 +43,6 @@ fi
 # Fix mdns printing
 sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf
 
-sudo pacman -S --noconfirm --needed git tig neovim less golang cmake gettext 
 
 sudo sed -i 's/\#Experimental\ \=\ false/Experimental\ =\ true/g' /etc/bluetooth/main.conf
 sudo systemctl enable --now bluetooth
@@ -55,10 +52,10 @@ sudo pacman -S --noconfirm --needed pipewire pipewire-audio pipewire-pulse pipew
 sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu noto-fonts noto-fonts-extra noto-fonts-emoji ttf-carlito ttf-croscore ttf-hack ttf-anonymous-pro ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono ttf-opensans ttf-roboto ttf-roboto-mono nerd-fonts otf-font-awesome
 
 # Install Hyprland
-sudo pacman -S --needed --noconfirm ly gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper slurp grim swappy rofi waybar ghostty dolphin firefox xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh nwg-look swayng
+sudo pacman -S --needed --noconfirm ly gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper slurp grim swappy rofi waybar thunar xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh nwg-look swayng
 
 # Install Apps
-sudo pacman -S --needed --noconfirm cmus libreoffice mpv mc evince thunderbird
+sudo pacman -S --needed --noconfirm cmus libreoffice mpv mc evince firefox thunderbird git tig neovim less golang cmake gettext nodejs npm ghostty
 yay -S --noconfirm --needed google-chrome sublime-text-4 google-cloud-cli
 
 sudo flatpak install -y flathub \
