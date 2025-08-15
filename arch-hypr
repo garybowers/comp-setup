@@ -4,15 +4,20 @@
 # Files are in the tmp folder so cleaned up after reboot
 function aurinst {
 	echo Installing aur package $1
-  if [ ! -d /tmp/aur ]; then
-    mkdir /tmp/aur
-  fi
+	if [ ! -d /tmp/aur ]; then
+	    mkdir /tmp/aur
+	fi
 	if [ -d /tmp/aur/$1 ]; then
 		rm -rf /tmp/aur/$1
 	fi
 	cd /tmp/aur && git clone https://aur.archlinux.org/$1.git && cd $1 && yes | makepkg -sic --needed
 	rm -rf /tmp/aur/$1
 }
+
+sudo pacman -S --noconfirm --needed reflector
+sudo systemctl enable --now reflector
+sudo reflector --country gb --fastest 10 --threads 10 --save /etc/pacman.d/mirrorlist
+sudo pacman -Sy
 
 # Set Timezone
 sudo ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
