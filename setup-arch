@@ -16,7 +16,6 @@ sudo systemctl enable --now NetworkManager
 sleep 2
 
 # Set the Timezone
-
 sudo ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 
 # Get the latest package keys for pacman
@@ -42,6 +41,7 @@ function aurinst {
 sudo pacman -S --noconfirm --needed dmidecode reflector
 sudo systemctl enable --now reflector
 sudo reflector --country gb --fastest 10 --threads 10 --save /etc/pacman.d/mirrorlist
+sudo pacman -Sy
 
 MANUFACTURER=$(sudo dmidecode -s system-manufacturer)
 GPU=$(lspci | grep -i '.* vga .* nvidia .*')
