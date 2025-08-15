@@ -23,7 +23,7 @@ There's some weirdness between the integrated AMD graphics and the Nvidia card -
 
 On the installer's grub boot screen press the 'e' button and then edit the boot entry to include `nomodeset` after the linux img entry and press F10
 
-1. Set the keyboard layout e.g. `loadkeys en_GB` or `loadkeys us`
+1. Set the keyboard layout e.g. `loadkeys gb` or `loadkeys us`
 
 2. Ensure you are connected to the internet - ethernet should just work with a USB ethernet adapter
 
