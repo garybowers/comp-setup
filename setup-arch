@@ -29,6 +29,9 @@ mkdir -p /tmp/aur
 # Files are in the tmp folder so cleaned up after reboot
 function aurinst {
 	echo Installing aur package $1
+	if [ -d /tmp/aur ]; then
+		mkdir /tmp/aur
+	fi
 	if [ -d /tmp/aur/$1 ]; then
 		rm -rf /tmp/aur/$1
 	fi
@@ -38,6 +41,7 @@ function aurinst {
 
 sudo pacman -S --noconfirm --needed dmidecode reflector
 sudo systemctl enable --now reflector
+sudo reflector --country gb --fastest 10 --threads 10 --save /etc/pacman.d/mirrorlist
 
 MANUFACTURER=$(sudo dmidecode -s system-manufacturer)
 GPU=$(lspci | grep -i '.* vga .* nvidia .*')
@@ -164,8 +168,8 @@ sudo usermod -aG docker $USER
 sudo usermod -aG libvirt $USER
 
 ##### Install YAY #####
-sudo aurinst yay
-sudo yay --save --answerdiff None --answerclean None --removemake
+aurinst yay
+yay --save --answerdiff None --answerclean None --removemake
 
 ##### FIX USB COPY HANGING #####
 sudo touch /etc/sysctl.d/99-sysctl.conf
@@ -202,7 +206,7 @@ if [ "$1" == "gnome" ]; then
                                       gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme geary gvfs gvfs-nfs gvfs-smb gvfs-goa evince yelp \
                                       gst-plugins-good gst-plugin-pipewire cheese gnome-music gnome-boxes gnome-characters gnome-chess gnome-clocks ukui-wallpapers
 
-  sudo yay -S --noconfirm ttf-roboto-slab gnome-shell-extension-no-overview gnome-shell-extension-dash-to-dock gnome-shell-extension-gsconnect
+  yay -S --noconfirm ttf-roboto-slab gnome-shell-extension-no-overview gnome-shell-extension-dash-to-dock gnome-shell-extension-gsconnect pop-icon-theme-git pop-gtk-theme-git pop-fonts pop-theme
   #aurinst pop-icon-theme-git
   #aurinst pop-gtk-theme-git
   #aurinst pop-fonts
