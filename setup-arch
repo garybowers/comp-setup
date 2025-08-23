@@ -204,13 +204,11 @@ if [ "$1" == "gnome" ]; then
                                       nautilus-image-converter nautilus-share sushi  gnome-shell-extension-desktop-icons-ng gnome-shell-extension-caffeine \
                                       remmina libsass parallel sassc gtk-engine-murrine fd gedit gstreamer gst-libav \
                                       gnome-mahjongg gnome-weather obsidian-icon-theme papirus-icon-theme geary gvfs gvfs-nfs gvfs-smb gvfs-goa evince yelp \
-                                      gst-plugins-good gst-plugin-pipewire cheese gnome-music gnome-boxes gnome-characters gnome-chess gnome-clocks ukui-wallpapers
+                                      gst-plugins-good gst-plugin-pipewire cheese gnome-music gnome-boxes gnome-characters gnome-chess gnome-clocks ukui-wallpapers \
+				      pop-icon-theme pop-gtk-theme
 
-  yay -S --noconfirm ttf-roboto-slab gnome-shell-extension-no-overview gnome-shell-extension-dash-to-dock gnome-shell-extension-gsconnect pop-icon-theme-git pop-gtk-theme-git pop-fonts pop-theme
-  #aurinst pop-icon-theme-git
-  #aurinst pop-gtk-theme-git
-  #aurinst pop-fonts
-  #aurinst pop-theme
+
+  yay -S --noconfirm ttf-roboto-slab gnome-shell-extension-no-overview gnome-shell-extension-dash-to-dock gnome-shell-extension-gsconnect pop-fonts
 
   gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark
   gsettings set org.gnome.desktop.interface enable-hot-corners false
