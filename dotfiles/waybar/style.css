@@ -65,8 +65,12 @@ button:hover {
 
 #workspaces button.focused {
     background-color: #64727D;
-    box-shadow: inset 0 -3px #ffffff;
 }
+
+#workspaces button.active {
+    background-color: #4c7899; /* A distinct highlight color */
+}
+
 
 #workspaces button.urgent {
     background-color: #eb4d4b;
@@ -85,6 +89,7 @@ button:hover {
 #temperature,
 #backlight,
 #network,
+#bluetooth,
 #pulseaudio,
 #wireplumber,
 #custom-media,
@@ -191,6 +196,10 @@ label:focus {
 
 #network.disconnected {
     background-color: #f53c3c;
+}
+
+#bluetooth {
+    background-color: #2980b9;
 }
 
 #pulseaudio {
