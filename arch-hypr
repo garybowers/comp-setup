@@ -16,11 +16,19 @@ function aurinst {
 
 sudo pacman -S --noconfirm --needed reflector rsync git
 sudo systemctl enable --now reflector
-sudo reflector --country gb --fastest 10 --threads 10 --save /etc/pacman.d/mirrorlist
+#sudo reflector --country gb --fastest 10 --threads 10 --save /etc/pacman.d/mirrorlist
 sudo pacman -Sy --noconfirm
 
 # Set Timezone
 sudo ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+sudo mkdir /etc/systemd/timesyncd.conf.d
+sudo bash -c 'cat <<EOF > /etc/systemd/timesyncd.conf.d/local.conf 
+[Time]
+NTP=10.76.42.100 10.76.40.100 10.76.44.100
+FallbackNTP=time.google.com
+EOF'
+
+sudo timedatectl set-ntp true
 
 sudo pacman -Suy
 sudo pacman -S --noconfirm --needed power-profiles-daemon bluez bluez-utils blueman acpi_call linux-headers acpid fwupd \
@@ -56,13 +64,13 @@ sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhos
 
 sudo sed -i 's/\#Experimental\ \=\ false/Experimental\ =\ true/g' /etc/bluetooth/main.conf
 sudo systemctl enable --now bluetooth
-sudo pacman -S --noconfirm --needed pipewire pipewire-audio pipewire-pulse pipewire-jack pavucontrol wireplumber
+sudo pacman -S --noconfirm --needed pipewire pipewire-audio pipewire-pulse pipewire-jack pavucontrol wireplumber wiremix
 
 # Install Fonts
 sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu noto-fonts noto-fonts-extra noto-fonts-emoji ttf-carlito ttf-croscore ttf-hack ttf-anonymous-pro ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono ttf-opensans ttf-roboto ttf-roboto-mono nerd-fonts otf-font-awesome
 
 # Install Hyprland
-sudo pacman -S --needed --noconfirm ly gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper slurp grim swappy rofi-wayland rofi-calc rofi-emoji waybar thunar thunar-volman thunar-archive-plugin thunar-shares-plugin thunar-vcs-plugin xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh nwg-look swaync swayosd pop-gtk-theme gvfs gvfs-nfs gvfs-smb sshfs wf-recorder wtype
+sudo pacman -S --needed --noconfirm uwsm ly gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper slurp grim swappy rofi-wayland rofi-calc rofi-emoji waybar thunar thunar-volman thunar-archive-plugin thunar-shares-plugin thunar-vcs-plugin xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh nwg-look swaync swayosd pop-gtk-theme gvfs gvfs-nfs gvfs-smb sshfs wf-recorder wtype
 
 sudo systemctl enable ly
 

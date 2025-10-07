@@ -18,6 +18,14 @@ sleep 2
 # Set the Timezone
 sudo ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 
+sudo mkdir /etc/systemd/timesyncd.conf.d
+
+cat >/etc/systemd/timesyncd.conf.d/local.conf <<EOF 
+[Time]
+NTP=10.76.42.100 10.76.40.100 10.76.44.100
+FallbackNTP=time.google.com
+EOF
+
 # Get the latest package keys for pacman
 sudo pacman-key --populate
 sudo pacman -Suy --noconfirm
