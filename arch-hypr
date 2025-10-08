@@ -70,7 +70,7 @@ sudo pacman -S --noconfirm --needed pipewire pipewire-audio pipewire-pulse pipew
 sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu noto-fonts noto-fonts-extra noto-fonts-emoji ttf-carlito ttf-croscore ttf-hack ttf-anonymous-pro ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono ttf-opensans ttf-roboto ttf-roboto-mono nerd-fonts otf-font-awesome
 
 # Install Hyprland
-sudo pacman -S --needed --noconfirm uwsm ly gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper slurp grim swappy rofi-wayland rofi-calc rofi-emoji waybar thunar thunar-volman thunar-archive-plugin thunar-shares-plugin thunar-vcs-plugin xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh nwg-look swaync swayosd pop-gtk-theme gvfs gvfs-nfs gvfs-smb sshfs wf-recorder wtype
+sudo pacman -S --needed --noconfirm uwsm ly gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper slurp grim swappy rofi-wayland rofi-calc rofi-emoji waybar nautilus xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh nwg-look swaync swayosd pop-gtk-theme gvfs gvfs-nfs gvfs-smb sshfs wf-recorder wtype
 
 sudo systemctl enable ly
 
