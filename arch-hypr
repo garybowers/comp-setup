@@ -15,8 +15,7 @@ function aurinst {
 }
 
 sudo pacman -S --noconfirm --needed reflector rsync git
-sudo systemctl enable --now reflector
-#sudo reflector --country gb --fastest 10 --threads 10 --save /etc/pacman.d/mirrorlist
+sudo reflector --country gb --fastest 10 --threads 10 --save /etc/pacman.d/mirrorlist
 sudo pacman -Sy --noconfirm
 
 # Set Timezone
@@ -31,16 +30,11 @@ EOF'
 sudo timedatectl set-ntp true
 
 sudo pacman -Suy
-sudo pacman -S --noconfirm --needed power-profiles-daemon bluez bluez-utils blueman acpi_call linux-headers acpid fwupd \
-									mesa libva-mesa-driver mesa-vdpau vulkan-mesa-layers vulkan-intel vulkan-radeon fprintd intltool \
-									xdg-utils dbus brightnessctl ca-certificates jq dmidecode 
-
-sudo pacman -S --noconfirm --needed wpa_supplicant dnsmasq openresolv nss-mdns wireguard-tools ufw openvpn networkmanager-openvpn openssh \
-									libxcrypt-compat samba dnsutils nfs-utils modemmanager avahi wireguard-tools reflector openssh fastfetch \
-									btop rsync curl wget cups cups-pdf flatpak modemmanager modem-manager-gui
-
-sudo systemctl enable --now cups.socket
-sudo systemctl enable --now cups
+sudo pacman -S --noconfirm --needed power-profiles-daemon bluez bluez-utils blueman bluetui acpi_call linux-headers acpid fwupd \
+		mesa libva-mesa-driver mesa-vdpau vulkan-mesa-layers vulkan-intel vulkan-radeon fprintd intltool \
+		xdg-utils dbus brightnessctl ca-certificates jq dmidecode wpa_supplicant dnsmasq openresolv nss-mdns \
+                wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils nfs-utils modemmanager \
+                avahi btop curl wget cups cups-pdf flatpak modem-manager-gui
 
 # Add rule for printing by users
 sudo touch /etc/polkit-1/rules.d/49-allow-passwordless-printer-admin.rules
@@ -60,10 +54,7 @@ fi
 
 # Fix mdns printing
 sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf
-
-
 sudo sed -i 's/\#Experimental\ \=\ false/Experimental\ =\ true/g' /etc/bluetooth/main.conf
-sudo systemctl enable --now bluetooth
 sudo pacman -S --noconfirm --needed pipewire pipewire-audio pipewire-pulse pipewire-jack pavucontrol wireplumber wiremix
 
 # Install Fonts
@@ -72,10 +63,8 @@ sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu noto-
 # Install Hyprland
 sudo pacman -S --needed --noconfirm uwsm ly gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper slurp grim swappy rofi-wayland rofi-calc rofi-emoji waybar nautilus xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh nwg-look swaync swayosd pop-gtk-theme gvfs gvfs-nfs gvfs-smb sshfs wf-recorder wtype
 
-sudo systemctl enable ly
-
 # Install Apps
-sudo pacman -S --needed --noconfirm cmus libreoffice mpv mc evince firefox thunderbird git tig neovim less go gopls cmake gettext nodejs npm ghostty
+sudo pacman -S --needed --noconfirm cmus libreoffice mpv mc evince firefox thunderbird tig neovim less go gopls cmake gettext nodejs npm ghostty kittyi code lazydocker lazygit jdk-openjdk
 yay -S --noconfirm --needed google-chrome sublime-text-4 google-cloud-cli
 
 sudo flatpak install -y flathub \
@@ -88,3 +77,10 @@ sudo flatpak install -y flathub \
 	com.bitwarden.desktop \
 	app/com.usebruno.Bruno/x86_64/stable \
 	app/io.beekeeperstudio.Studio/x86_64/stable
+
+# Enable Services
+sudo systemctl enable --now cups.socket
+sudo systemctl enable --now cups
+sudo systemctl enable ly
+sudo systemctl enable --now bluetooth
+
