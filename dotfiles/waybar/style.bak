@@ -1,7 +1,7 @@
 * {
     /* `otf-font-awesome` is required to be installed for icons */
-    font-family: 'Noto Sans Mono'; 
-    font-size: 14px;
+    font-family: FontAwesome, Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
 }
 
 window#waybar {
@@ -50,7 +50,7 @@ button:hover {
 
 /* you can set a style on hover for any module like this */
 #pulseaudio:hover {
-    /* background-color: #a37800; */
+    background-color: #a37800;
 }
 
 #workspaces button {
@@ -119,15 +119,17 @@ button:hover {
 }
 
 #clock {
-    
+    background-color: #64727D;
 }
 
 #battery {
-    padding-right: 15px;
+    background-color: #ffffff;
+    color: #000000;
 }
 
 #battery.charging, #battery.plugged {
-    color: #26A65B;
+    color: #ffffff;
+    background-color: #26A65B;
 }
 
 @keyframes blink {
@@ -139,7 +141,8 @@ button:hover {
 
 /* Using steps() instead of linear as a timing function to limit cpu usage */
 #battery.critical:not(.charging) {
-    color: #f53c3c;
+    background-color: #f53c3c;
+    color: #ffffff;
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: steps(12);
@@ -152,15 +155,18 @@ button:hover {
 }
 
 #power-profiles-daemon.performance {
-    color: #f53c3c;
+    background-color: #f53c3c;
+    color: #ffffff;
 }
 
 #power-profiles-daemon.balanced {
-    color: #2980b9;
+    background-color: #2980b9;
+    color: #ffffff;
 }
 
 #power-profiles-daemon.power-saver {
-    color: #2ecc71;
+    background-color: #2ecc71;
+    color: #000000;
 }
 
 label:focus {
@@ -168,23 +174,24 @@ label:focus {
 }
 
 #cpu {
-    color: #2ecc71;
+    background-color: #2ecc71;
+    color: #000000;
 }
 
 #memory {
-    color: #A600FF;
+    background-color: #9b59b6;
 }
 
 #disk {
-    color: #FF00D4;
+    background-color: #964B00;
 }
 
 #backlight {
-    color: #ffffff;
+    background-color: #90b1b1;
 }
 
 #network {
-    color: #00ff00;
+    background-color: #2980b9;
 }
 
 #network.disconnected {
@@ -192,11 +199,12 @@ label:focus {
 }
 
 #bluetooth {
-    color: #00E6FF;
+    background-color: #2980b9;
 }
 
 #pulseaudio {
-    color: #f1c40f;
+    background-color: #f1c40f;
+    color: #000000;
 }
 
 #pulseaudio.muted {
@@ -228,11 +236,11 @@ label:focus {
 }
 
 #temperature {
-    color: #f0932b;
+    background-color: #f0932b;
 }
 
 #temperature.critical {
-    color: #eb4d4b;
+    background-color: #eb4d4b;
 }
 
 #tray {
@@ -249,11 +257,12 @@ label:focus {
 }
 
 #idle_inhibitor {
-    color: #ecf0f1;
+    background-color: #2d3436;
 }
 
 #idle_inhibitor.activated {
-    color: #ff0000;
+    background-color: #ecf0f1;
+    color: #2d3436;
 }
 
 #mpd {

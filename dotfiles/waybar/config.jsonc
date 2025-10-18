@@ -7,26 +7,27 @@
     "spacing": 1, // Gaps between modules (4px)
     // Choose the order of the modules
     "modules-left": [
-        "hyprland/workspaces"
+        "hyprland/workspaces",
+        "mpris"
     ],
     "modules-center": [
-	"mpris"
+        "clock"
     ],
     "modules-right": [
         "mpd",
         "idle_inhibitor",
         "pulseaudio",
         "network",
-	"bluetooth",
+       	"bluetooth",
         "power-profiles-daemon",
         "cpu",
         "memory",
+        "disk",
         "temperature",
         "backlight",
         //"keyboard-state",
         //"hyprland/language",
         "battery",
-        "clock",
         "tray",
         "custom/power"
     ],
@@ -60,6 +61,17 @@
         "format-icons": {
             "locked": "",
             "unlocked": ""
+        }
+    },
+    "mpris": {
+        "format": "{player_icon} {dynamic}",
+        "format-paused": "{status_icon} <i>{dynamic}</i>",
+        "player-icons": {
+          "default:": "▶",
+          //"mpv": "🎵"
+        },
+        "status-icons": {
+          "paused": "⏸"
         }
     },
     "mpd": {
@@ -110,24 +122,28 @@
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
     "cpu": {
-        "format": "{usage}% ",
-        "tooltip-format": "{avg_frequency}Ghz"
+        "format": " {usage}%",
+        "tooltip-format": "{avg_frequency}Ghz",
+        "on-click": "kitty -e /usr/sbin/btop"
     },
     "memory": {
-        "format": "{percentage}% ",
+        "format": " {percentage}%",
 	"tooltip-format": "Used: {used}G Total: {total}G"
+    },
+    "disk": {
+	"format": "{used}"
     },
     "temperature": {
         // "thermal-zone": 2,
         // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
         "critical-threshold": 80,
         // "format-critical": "{temperatureC}°C {icon}",
-        "format": "{temperatureC}°C {icon}",
+        "format": "{icon} {temperatureC}°C",
         "format-icons": ["", "", ""]
     },
     "backlight": {
         // "device": "acpi_video1",
-        "format": "{percent}% {icon}",
+        "format": "{icon} {percent}%",
         "format-icons": ["", "", "", "", "", "", "", "", ""]
     },
     "battery": {
@@ -158,31 +174,31 @@
     },
     "network": {
         // "interface": "wlp2*", // (Optional) To force the use of this interface
-        "format-wifi": "{essid} ({signalStrength}%) ",
-        "format-ethernet": "{ipaddr}/{cidr} ",
-        "tooltip-format": "{ifname} via {gwaddr} ",
+        "format-wifi": "  {essid} ({signalStrength}%)",
+        "format-ethernet": "{ipaddr}/{cidr}",
+        "tooltip-format": "{ifname} {ipaddr}/{cidr} via {gwaddr}",
         "format-linked": "{ifname} (No IP) ",
         "format-disconnected": "Disconnected ⚠",
-        "format-alt": "{ifname}: {ipaddr}/{cidr}"
+        "on-click": "kitty -e /usr/sbin/nmtui"
     },
-//	"on-click": "blueman-manager"
     "bluetooth": {
-	"format": " {status}",
+	"format": "",
 	"format-connected": " {num_connections}",
 	"format-connected-battery": " {num_connections}",
 	// "format-device-preference": [ "device1", "device2" ], // preference list deciding the displayed device
 	"tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
 	"tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
 	"tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
-	"tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%"
+	"tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
+	"on-click": "kitty -e /usr/sbin/bluetui"
     },
     "pulseaudio": {
         // "scroll-step": 1, // %, can be a float
-        "format": "{volume}% {icon} {format_source}",
-        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format": "{icon}   {volume}% {format_source}",
+        "format-bluetooth": "{icon} {volume}% {format_source}",
         "format-bluetooth-muted": " {icon} {format_source}",
         "format-muted": " {format_source}",
-        "format-source": "{volume}% ",
+        "format-source": " {volume}%",
         "format-source-muted": "",
         "format-icons": {
             "headphone": "",
@@ -213,7 +229,7 @@
 		"menu": "on-click",
 		"menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
 		"menu-actions": {
-			"shutdown": "shutdown",
+			"shutdown": "poweroff",
 			"reboot": "reboot",
 			"suspend": "systemctl suspend",
 			"hibernate": "systemctl hibernate"
