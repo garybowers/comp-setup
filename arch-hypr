@@ -30,7 +30,7 @@ EOF'
 sudo timedatectl set-ntp true
 
 sudo pacman -Suy
-sudo pacman -S --noconfirm --needed power-profiles-daemon bluez bluez-utils blueman bluetui acpi_call linux-headers acpid fwupd \
+sudo pacman -S --noconfirm --needed power-profiles-daemon bluez bluez-utils bluetui acpi_call linux-headers acpid fwupd \
 		mesa libva-mesa-driver mesa-vdpau vulkan-mesa-layers vulkan-intel vulkan-radeon fprintd intltool \
 		xdg-utils dbus brightnessctl ca-certificates jq dmidecode wpa_supplicant dnsmasq openresolv nss-mdns \
                 wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils nfs-utils modemmanager \
