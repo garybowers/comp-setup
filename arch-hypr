@@ -31,10 +31,10 @@ sudo timedatectl set-ntp true
 
 sudo pacman -Suy
 sudo pacman -S --noconfirm --needed power-profiles-daemon bluez bluez-utils bluetui acpi_call linux-headers acpid fwupd \
-		mesa libva-mesa-driver mesa-vdpau vulkan-mesa-layers vulkan-intel vulkan-radeon fprintd intltool \
-		xdg-utils dbus brightnessctl ca-certificates jq dmidecode wpa_supplicant dnsmasq openresolv nss-mdns \
-                wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils nfs-utils modemmanager \
-                avahi btop curl wget cups cups-pdf flatpak modem-manager-gui
+                                	  mesa libva-mesa-driver vulkan-mesa-layers vulkan-intel vulkan-radeon fprintd intltool \
+                                		xdg-utils dbus brightnessctl ca-certificates jq dmidecode wpa_supplicant dnsmasq openresolv nss-mdns \
+                                    wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils nfs-utils modemmanager \
+                                    avahi btop curl wget cups cups-pdf flatpak modem-manager-gui
 
 # Add rule for printing by users
 sudo touch /etc/polkit-1/rules.d/49-allow-passwordless-printer-admin.rules
@@ -64,7 +64,7 @@ sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu noto-
 sudo pacman -S --needed --noconfirm uwsm ly gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper slurp grim swappy rofi-wayland rofi-calc rofi-emoji waybar nautilus xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh nwg-look swaync swayosd pop-gtk-theme gvfs gvfs-nfs gvfs-smb sshfs wf-recorder wtype
 
 # Install Apps
-sudo pacman -S --needed --noconfirm cmus libreoffice mpv mc evince firefox thunderbird tig neovim less go gopls cmake gettext nodejs npm ghostty kittyi code lazydocker lazygit jdk-openjdk
+sudo pacman -S --needed --noconfirm cmus libreoffice mpv mc evince firefox thunderbird tig neovim less go gopls cmake gettext nodejs npm ghostty kitty code lazydocker lazygit
 yay -S --noconfirm --needed google-chrome sublime-text-4 google-cloud-cli
 
 sudo flatpak install -y flathub \
@@ -81,6 +81,6 @@ sudo flatpak install -y flathub \
 # Enable Services
 sudo systemctl enable --now cups.socket
 sudo systemctl enable --now cups
-sudo systemctl enable ly
+sudo systemctl enable ly@tty1
 sudo systemctl enable --now bluetooth
 
