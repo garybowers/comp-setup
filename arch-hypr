@@ -16,7 +16,7 @@ function aurinst {
 
 sudo pacman -S --noconfirm --needed reflector rsync git
 sudo reflector --country gb --fastest 10 --threads 10 --save /etc/pacman.d/mirrorlist
-sudo pacman -Sy --noconfirm
+sudo pacman -Suy --noconfirm
 
 # Set Timezone
 sudo ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
@@ -55,7 +55,9 @@ fi
 # Fix mdns printing
 sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf
 sudo sed -i 's/\#Experimental\ \=\ false/Experimental\ =\ true/g' /etc/bluetooth/main.conf
-sudo pacman -S --noconfirm --needed pipewire pipewire-audio pipewire-pulse pipewire-jack pavucontrol wireplumber wiremix
+sudo pacman -S --noconfirm --needed pipewire pipewire-audio pipewire-pulse pipewire-jack pavucontrol wireplumber wiremix easyeffects lmms zam-plugins-lv2 lsp-plugins-lv2 fluidsynth mda.lv2
+
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
 
 # Install Fonts
 sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu noto-fonts noto-fonts-extra noto-fonts-emoji ttf-carlito ttf-croscore ttf-hack ttf-anonymous-pro ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono ttf-opensans ttf-roboto ttf-roboto-mono nerd-fonts otf-font-awesome
@@ -64,7 +66,7 @@ sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu noto-
 sudo pacman -S --needed --noconfirm uwsm ly gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper slurp grim swappy rofi-wayland rofi-calc rofi-emoji waybar nautilus xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh nwg-look swaync swayosd pop-gtk-theme gvfs gvfs-nfs gvfs-smb sshfs wf-recorder wtype
 
 # Install Apps
-sudo pacman -S --needed --noconfirm cmus libreoffice mpv mc evince firefox thunderbird tig neovim less go gopls cmake gettext nodejs npm ghostty kitty code lazydocker lazygit
+sudo pacman -S --needed --noconfirm cmus libreoffice mpv mc evince firefox thunderbird tig neovim less go gopls cmake gettext nodejs npm ghostty kitty zed lazydocker lazygit
 yay -S --noconfirm --needed google-chrome sublime-text-4 google-cloud-cli
 
 sudo flatpak install -y flathub \
