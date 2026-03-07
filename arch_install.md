@@ -1,237 +1,287 @@
-# Arch Linux Setup
+# Arch Linux Installation Guide
+## ThinkPad X1 Carbon Gen 9
 
-## This Guide
+---
 
-This guide walks you through installing Arch Linux on the Razer Blade 14 2021 Edition.
+## Pre-Installation
 
-The laptop has a AMD Ryzen 5900HX with AMD Graphics and a Nvidia Geforce 3xxx Graphics. 
+### Boot the Arch ISO
+```bash
+# Verify boot mode (should show files for UEFI)
+ls /sys/firmware/efi/efivars
 
-Currently the only thing not working with this guide is the headphone jack.
+# Connect to internet via ethernet or wifi
+iwctl
+  station wlan0 scan
+  station wlan0 connect "SSID"
+  exit
 
-## Stage 1 - Arch Installer
-
-1.	Download the latest arch iso from [https://www.mirrorservice.org/sites/ftp.archlinux.org/iso/](https://www.mirrorservice.org/sites/ftp.archlinux.org/iso/)
-
-2.  Copy to a USB Stick with the command `dd if=archlinux-xxxx.iso of=/dev/sdb status=progress bs=4M`  or use [https://www.ventoy.net/en/index.html](Ventoy)
-
-3.  Reboot and boot from USB
-
-
-## Stage 2 - Installing
-
-There's some weirdness between the integrated AMD graphics and the Nvidia card - so you may observe the machine rebooting during the boot process.
-
-On the installer's grub boot screen press the 'e' button and then edit the boot entry to include `nomodeset` after the linux img entry and press F10
-
-1. Set the keyboard layout e.g. `loadkeys en_GB` or `loadkeys us`
-
-2. Ensure you are connected to the internet - ethernet should just work with a USB ethernet adapter
-
-3. Set NTP with `timedatectl set-ntp true`
-
-4. Update the archlinux keyring
-
-```
-pacman-key --init
-pacman-key --populate archlinux
-pacman -Sy archlinux-keyring
+ping archlinux.org
+timedatectl set-ntp true
 ```
 
-### Stage 2.1 - Disks
+---
 
-##### 1.  Prepare for full disk encryption
+## Partition the Disk
 
-`modprobe dm-crypt` + `modprobe dm-mod`
-
-##### 2.  Partition your disk (This will erase everything!)
-
-To get your ssd device name  e.g. `nvme0n1` use the `lsblk` command
-
-run `fdisk /dev/nvme0n1`
-
-now delete all the partitions by pressing `d` until you have no partitions left, then press `w`
-
-Create your new partitions
-
-Press `g` to create a GPT style layout
-
-Press `n` to create a new parition
-
-```
-Layout:
-	Partition number: **1**
-	Starting Block: leave as default
-	Finish Block: `+1GB`
-	Type: 1 (EFI System)
-	Dev: /dev/nvme0n1p1
-
-	Partition number: **2**
-	Starting Block: leave as default
-	Finish Block: `+1GB`
-	Type: 20 (Linux filesystem)
-	Dev: /dev/nvme0n1p2
-
-	Partition number: **3**
-	Starting Block: leave as default
-	Finish Block: leave as default
-	Type: 20 (Linux filesystem)
-	Dev: /dev/nvme0n1p3
+```bash
+lsblk                          # confirm disk is nvme0n1
+fdisk /dev/nvme0n1
 ```
 
-##### 3.  Setup LUKS Encryption
-	
-To set up the encrypted filesystem run:
-
+Inside `fdisk`:
 ```
+g        # new GPT partition table
+
+n        # partition 1 — EFI
+<enter>  # default partition number (1)
+<enter>  # default first sector
++1G      # size
+
+t        # change type
+1        # select partition 1
+1        # type: EFI System
+
+n        # partition 2 — boot
+<enter>  # default partition number (2)
+<enter>  # default first sector
++1G      # size
+         # type stays Linux filesystem (default, no change needed)
+
+n        # partition 3 — LUKS
+<enter>  # default partition number (3)
+<enter>  # default first sector
+<enter>  # rest of disk
+
+t        # change type
+3        # select partition 3
+44       # type: Linux LVM
+
+p        # print and verify layout
+w        # write and exit
+```
+
+Your layout should look like:
+```
+Device           Start       End   Sectors  Size Type
+/dev/nvme0n1p1   2048   2099199   2097152    1G  EFI System
+/dev/nvme0n1p2   2099200  4196351   2097152    1G  Linux filesystem
+/dev/nvme0n1p3   4196352  ...      ...       rest Linux LVM
+```
+
+---
+
+## Format EFI and Boot
+
+```bash
+mkfs.fat -F32 /dev/nvme0n1p1
+mkfs.ext4 /dev/nvme0n1p2
+```
+
+---
+
+## Set Up LUKS Encryption
+
+```bash
+# Encrypt the third partition
 cryptsetup luksFormat -v -s 512 -h sha512 /dev/nvme0n1p3
+
+# Verify the settings
+cryptsetup luksDump /dev/nvme0n1p3
+
+# Open the encrypted container
+cryptsetup open /dev/nvme0n1p3 cryptlvm
 ```
 
-Once you follow the instructions and entered a passsword open the disk:
+---
 
-```
-cryptsetup open /dev/nvme0n1p3 luks_root
-```
+## Set Up LVM Inside LUKS
 
-##### 4.  Format the paritions
+```bash
+# Create physical volume
+pvcreate /dev/mapper/cryptlvm
 
-Format the EFI System Partition as FAT
+# Create volume group
+vgcreate vg0 /dev/mapper/cryptlvm
 
-```
-mksfs.vfat -n "EFI SYSTEM" /dev/nvme0n1p1
-```
+# Create swap (32GB)
+lvcreate -L 32G vg0 -n swap
 
-Format the Boot parition as EXT4
+# Create root (remaining space)
+lvcreate -l 100%FREE vg0 -n root
 
-```
-mkfs.ext4 -L boot /dev/nvme0n1p2
-```
-
-Format the Root partition as EXT4
-
-```
-mkfs.ext4 -L root /dev/mapper/luks_root
+# Format volumes
+mkfs.ext4 /dev/vg0/root
+mkswap /dev/vg0/swap
 ```
 
-##### 5.  Mount the disks for installation
+---
 
-```
-mount /dev/mapper/luks_root /mnt
+## Mount Everything
+
+```bash
+mount /dev/vg0/root /mnt
+
 mkdir /mnt/boot
 mount /dev/nvme0n1p2 /mnt/boot
+
 mkdir /mnt/boot/efi
 mount /dev/nvme0n1p1 /mnt/boot/efi
+
+swapon /dev/vg0/swap
 ```
 
-##### 6.  Create the swap file on the encrypted volume
+---
 
-```
-cd /mnt
-dd if=/dev/zero of=swap bs=1M count=8192
-chmod 0600 swap
-mkswap swap
-swapon swap
+## Install Base System
+
+```bash
+pacstrap /mnt base base-devel linux linux-firmware \
+  lvm2 grub efibootmgr \
+  networkmanager vim sudo
 ```
 
-### Stage 2.2 - Install the base arch system
+---
 
-```
-pacstrap -i /mnt base base-devel efibootmgr grub linux linux-firmware networkmanager sudo vi vim bash bash-completion nvidia amd-ucode
-```
-	
-Now generate the fstab based on the layout in /mnt
-	
-```
+## Generate fstab
+
+```bash
 genfstab -U /mnt >> /mnt/etc/fstab
-````
-
-### Stage 2.3 - Configure the arch system
-
-Now it's time to drop into the new arch system and configure it for boot.
-
+cat /mnt/etc/fstab   # verify it looks correct
 ```
+
+---
+
+## Chroot In
+
+```bash
 arch-chroot /mnt
 ```
 
-##### Set the hostname
+---
 
-```
-echo 'HOSTNAME' >> /etc/hostname
-```
+## System Configuration
 
-##### Set the keyboard layout
-```
-echo 'KEYMAP=en_GB' >> /etc/vconsole.conf
-```
+```bash
+# Timezone
+ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+hwclock --systohc
 
-##### Set the language
-
-```
-echo 'LANG=en_GB.UTF8' >> /etc/locale.conf
-```
-
-##### Set the locale
-
-```
-echo 'en_GB.UTF-8 UTF-8' >> /etc/locale.gen
-echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+# Locale
+echo "en_GB.UTF-8 UTF-8" >> /etc/locale.gen
 locale-gen
+echo "LANG=en_GB.UTF-8" > /etc/locale.conf
+
+# Hostname
+echo "thinkpad" > /etc/hostname
+cat > /etc/hosts <<EOF
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   thinkpad.localdomain thinkpad
+EOF
+
+# Root password
+passwd
 ```
 
-##### Set the hosts file
+---
+
+## Configure mkinitcpio
+
+Edit `/etc/mkinitcpio.conf` — find the `HOOKS` line and make it:
 
 ```
-echo '127.0.0.1 localhost' >> /etc/hosts
-echo '::1 localhost' >> /etc/hosts
-echo '127.0.1.1 hostname.my.domain.tld hostname' >> /etc/hosts
+HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt lvm2 filesystems fsck)
 ```
 
-##### Set the root user password
+The critical additions are **`encrypt`** and **`lvm2`**, placed before `filesystems`.
+
+```bash
+mkinitcpio -P
+```
+
+---
+
+## Install & Configure GRUB
+
+```bash
+grub-install --target=x86_64-efi \
+  --efi-directory=/boot/efi \
+  --bootloader-id=GRUB \
+  --recheck
+```
+
+### Get the LUKS UUID
+
+```bash
+blkid /dev/nvme0n1p3
+# Copy the UUID value
+```
+
+### Edit GRUB defaults
+
+Edit `/etc/default/grub`, find `GRUB_CMDLINE_LINUX` and set:
 
 ```
-passwd root
+GRUB_CMDLINE_LINUX="cryptdevice=UUID=<YOUR-UUID-HERE>:cryptlvm root=/dev/vg0/root"
 ```
 
-##### Configure the bootloader
-
-Edit the grub file using  `vim /etc/default/grub`
-
-locate the line with `GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3"`
-
-edit this to the following: 
-
-`GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 nvidia-drm.modeset=1"` (don't forget the quotes)
-
-Locate the line with `GRUB_CMDLINE_LINUX=""` and change to read:
-`GRUB_CMDLINE_LINUX="cryptdevice=/dev/nvme0n1p3:luks_root"`
-
-Save and exit with escape :wq
-
-**Install Grub:**
-
+Also uncomment:
 ```
-grub-install --boot-directory=/boot --efi-directory=/boot/efi /dev/nvme0n1p2
+GRUB_ENABLE_CRYPTODISK=y
+```
+
+### Generate GRUB config
+
+```bash
 grub-mkconfig -o /boot/grub/grub.cfg
-grub-mkconfig -o /boot/efi/EFI/arch/grub.cfg
 ```
 
-##### Initramfs
+---
 
-Edit the `/etc/mkinitcpio.conf` file and look for the `HOOKS=` section, after the `block` entry add the entry `encrypt`
-Save and exit
+## Enable Services & Create User
 
-Execute `mkinitcpio -p linux`
+```bash
+# Enable NetworkManager for post-boot networking
+systemctl enable NetworkManager
 
-##### Reboot
+# Create a regular user
+useradd -m -G wheel -s /bin/bash yourusername
+passwd yourusername
 
-To reboot type exit to exit out of the chroot and then type reboot.
+# Allow wheel group to use sudo
+EDITOR=vim visudo
+# Uncomment:  %wheel ALL=(ALL:ALL) ALL
+```
 
-##### Setup
+---
 
-Once the system has booted off the internal SSD, login as root and your password set above.
+## Reboot
 
-You will need to setup your network connection to do this run:
-`systemctl enable --now NetworkManager`
+```bash
+exit              # exit chroot
+umount -R /mnt
+swapoff /dev/vg0/swap
+reboot
+```
 
-Then run nmtui to configure your network.
+Remove the USB drive when the screen goes blank. GRUB will prompt for your LUKS passphrase on every boot before handing off to the system.
 
-Use pacman to install the various packages, have a look at my setup_arch script in this repo for an example.
+---
+
+## ThinkPad X1 Carbon Gen 9 — Post-Install Tips
+
+| Thing | Package |
+|---|---|
+| Intel microcode (auto-applied via `microcode` hook) | `intel-ucode` — add if not pulled in |
+| Wifi (Intel AX201) | included in `linux-firmware` |
+| Touchpad | `xf86-input-libinput` if you add X11 |
+| Throttling fix | `throttled` (AUR) |
+| Power management | `tlp` + `tlp-rdw` |
+| Fingerprint reader | `fprintd` + `libfprint` |
+
+Install `intel-ucode` now if not already present:
+```bash
+pacman -S intel-ucode
+grub-mkconfig -o /boot/grub/grub.cfg
+```
