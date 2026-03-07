@@ -1,88 +1,220 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# This function just gets a specific aur package and installs it
-# Files are in the tmp folder so cleaned up after reboot
+# ---------------------------------------------------------------------------
+# Post-install setup: Arch Linux + Hyprland (Wayland + Pipewire)
+# ThinkPad X1 Carbon Gen 9
+# ---------------------------------------------------------------------------
+
+# Install an AUR package into /tmp (cleaned up on reboot)
 function aurinst {
-	echo Installing aur package $1
-	if [ ! -d /tmp/aur ]; then
-	    mkdir /tmp/aur
-	fi
-	if [ -d /tmp/aur/$1 ]; then
-		rm -rf /tmp/aur/$1
-	fi
-	cd /tmp/aur && git clone https://aur.archlinux.org/$1.git && cd $1 && yes | makepkg -sic --needed
-	rm -rf /tmp/aur/$1
+    local pkg="$1"
+    echo "Installing AUR package: $pkg"
+    # Skip if already installed
+    if pacman -Qi "$pkg" &>/dev/null; then
+        echo "$pkg is already installed, skipping"
+        return
+    fi
+    mkdir -p /tmp/aur
+    rm -rf "/tmp/aur/$pkg"
+    cd /tmp/aur && git clone "https://aur.archlinux.org/${pkg}.git" && cd "$pkg" && yes | makepkg -sic --needed
+    rm -rf "/tmp/aur/$pkg"
 }
 
+# ---------------------------------------------------------------------------
+# Mirrors & system update
+# ---------------------------------------------------------------------------
 sudo pacman -S --noconfirm --needed reflector rsync git
-sudo reflector --country gb --fastest 10 --threads 10 --save /etc/pacman.d/mirrorlist
+sudo reflector --country gb --fastest 10 --save /etc/pacman.d/mirrorlist
 sudo pacman -Suy --noconfirm
 
-# Set Timezone
+# ---------------------------------------------------------------------------
+# Timezone & NTP
+# ---------------------------------------------------------------------------
 sudo ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
-sudo mkdir /etc/systemd/timesyncd.conf.d
-sudo bash -c 'cat <<EOF > /etc/systemd/timesyncd.conf.d/local.conf 
+sudo mkdir -p /etc/systemd/timesyncd.conf.d
+sudo bash -c 'cat <<EOF > /etc/systemd/timesyncd.conf.d/local.conf
 [Time]
 NTP=10.76.42.100 10.76.40.100 10.76.44.100
 FallbackNTP=time.google.com
 EOF'
-
 sudo timedatectl set-ntp true
 
-sudo pacman -Suy
-sudo pacman -S --noconfirm --needed power-profiles-daemon bluez bluez-utils bluetui acpi_call linux-headers acpid fwupd \
-                                	  mesa libva-mesa-driver vulkan-mesa-layers vulkan-intel vulkan-radeon fprintd intltool \
-                                		xdg-utils dbus brightnessctl ca-certificates jq dmidecode wpa_supplicant dnsmasq openresolv nss-mdns \
-                                    wireguard-tools ufw openvpn networkmanager-openvpn openssh libxcrypt-compat samba dnsutils nfs-utils modemmanager \
-                                    avahi btop curl wget cups cups-pdf flatpak modem-manager-gui
+# ---------------------------------------------------------------------------
+# GPU detection — install appropriate Vulkan/VA-API drivers
+# ---------------------------------------------------------------------------
+if lspci | grep -i "VGA\|3D" | grep -iq intel; then
+    echo "Intel GPU detected"
+    sudo pacman -S --noconfirm --needed vulkan-intel intel-media-driver
+fi
+if lspci | grep -i "VGA\|3D" | grep -iq amd; then
+    echo "AMD GPU detected"
+    sudo pacman -S --noconfirm --needed vulkan-radeon libva-mesa-driver
+fi
 
-# Add rule for printing by users
-sudo touch /etc/polkit-1/rules.d/49-allow-passwordless-printer-admin.rules
-sudo bash -c 'cat << EOF > /etc/polkit-1/rules.d/49-allow-passwordless-printer-admin.rules
+# ---------------------------------------------------------------------------
+# Core system packages
+# ---------------------------------------------------------------------------
+sudo pacman -S --noconfirm --needed \
+    power-profiles-daemon \
+    bluez bluez-utils bluetui \
+    acpi_call linux-headers acpid \
+    fwupd \
+    mesa libva-mesa-driver vulkan-mesa-layers \
+    fprintd intltool \
+    xdg-utils dbus brightnessctl \
+    ca-certificates jq dmidecode \
+    dnsmasq nss-mdns \
+    wireguard-tools ufw openvpn networkmanager-openvpn \
+    openssh libxcrypt-compat \
+    samba dnsutils nfs-utils \
+    modemmanager \
+    avahi \
+    btop curl wget \
+    cups cups-pdf cups-pk-helper \
+    flatpak
+
+# ---------------------------------------------------------------------------
+# Printer polkit rule (allows wheel group to manage printers without password)
+# ---------------------------------------------------------------------------
+sudo bash -c 'cat <<EOF > /etc/polkit-1/rules.d/49-allow-passwordless-printer-admin.rules
 polkit.addRule(function(action, subject) {
     if (action.id == "org.opensuse.cupspkhelper.mechanism.all-edit" &&
-        subject.isInGroup("wheel")){
+        subject.isInGroup("wheel")) {
         return polkit.Result.YES;
     }
 });
 EOF'
 
-# install yay
-if [ ! -f /sbin/yay ]; then
-	aurinst yay
-fi
+# ---------------------------------------------------------------------------
+# mDNS / NSSwitch fix for network printing discovery
+# ---------------------------------------------------------------------------
+sudo sed -i 's/hosts:\ mymachines\ resolve\ \[!UNAVAIL=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf
 
-# Fix mdns printing
-sudo sed -i 's/hosts\:\ mymachines\ resolve\ \[\!UNAVAIL\=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf
-sudo sed -i 's/\#Experimental\ \=\ false/Experimental\ =\ true/g' /etc/bluetooth/main.conf
-sudo pacman -S --noconfirm --needed pipewire pipewire-audio pipewire-pulse pipewire-jack pavucontrol wireplumber wiremix easyeffects lmms zam-plugins-lv2 lsp-plugins-lv2 fluidsynth mda.lv2
+# ---------------------------------------------------------------------------
+# Bluetooth experimental features (needed for some BT audio profiles)
+# ---------------------------------------------------------------------------
+sudo sed -i 's/#Experimental\ =\ false/Experimental = true/g' /etc/bluetooth/main.conf
 
+# ---------------------------------------------------------------------------
+# Pipewire audio stack
+# ---------------------------------------------------------------------------
+sudo pacman -S --noconfirm --needed \
+    pipewire pipewire-audio pipewire-pulse pipewire-jack \
+    pavucontrol wireplumber \
+    wiremix easyeffects \
+    zam-plugins-lv2 lsp-plugins-lv2 fluidsynth mda.lv2
+
+# EasyEffects presets
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
 
-# Install Fonts
-sudo pacman -S --noconfirm --needed ttf-ibm-plex ttf-liberation ttf-dejavu noto-fonts noto-fonts-extra noto-fonts-emoji ttf-carlito ttf-croscore ttf-hack ttf-anonymous-pro ttf-droid ttf-fira-code ttf-fira-mono ttf-fira-sans ttf-font-awesome ttf-jetbrains-mono ttf-opensans ttf-roboto ttf-roboto-mono nerd-fonts otf-font-awesome
+# ---------------------------------------------------------------------------
+# Fonts (targeted selection — avoids pulling in all of nerd-fonts)
+# ---------------------------------------------------------------------------
+sudo pacman -S --noconfirm --needed \
+    ttf-ibm-plex \
+    ttf-liberation \
+    ttf-dejavu \
+    noto-fonts noto-fonts-extra noto-fonts-emoji \
+    ttf-carlito ttf-croscore \
+    ttf-hack \
+    ttf-anonymous-pro \
+    ttf-droid \
+    ttf-fira-code ttf-fira-mono ttf-fira-sans \
+    ttf-font-awesome otf-font-awesome \
+    ttf-jetbrains-mono ttf-jetbrains-mono-nerd \
+    ttf-opensans \
+    ttf-roboto ttf-roboto-mono
 
-# Install Hyprland
-sudo pacman -S --needed --noconfirm uwsm ly gtk3 hyprland hyprlock hyprpolkitagent hypridle hyprpaper slurp grim swappy rofi-wayland rofi-calc rofi-emoji waybar nautilus xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wl-clipboard feh nwg-look swaync swayosd pop-gtk-theme gvfs gvfs-nfs gvfs-smb sshfs wf-recorder wtype
+# ---------------------------------------------------------------------------
+# Hyprland & Wayland desktop
+# ---------------------------------------------------------------------------
+sudo pacman -S --needed --noconfirm \
+    uwsm ly \
+    gtk3 gtk4 \
+    hyprland hyprlock hyprpolkitagent hypridle hyprpaper hyprcursor hyprutils \
+    slurp grim swappy \
+    rofi-wayland rofi-calc rofi-emoji \
+    waybar \
+    nautilus \
+    xdg-desktop-portal-hyprland xdg-desktop-portal-gtk \
+    wl-clipboard cliphist \
+    nwg-look \
+    swaync \
+    swayosd \
+    pop-gtk-theme \
+    gvfs gvfs-nfs gvfs-smb sshfs \
+    wf-recorder wtype
 
-# Install Apps
-sudo pacman -S --needed --noconfirm cmus libreoffice mpv mc evince firefox thunderbird tig neovim less go gopls cmake gettext nodejs npm ghostty kitty zed lazydocker lazygit
-yay -S --noconfirm --needed google-chrome sublime-text-4 google-cloud-cli
+# ---------------------------------------------------------------------------
+# Install yay (AUR helper)
+# ---------------------------------------------------------------------------
+if ! command -v yay &>/dev/null; then
+    aurinst yay
+fi
 
+# ---------------------------------------------------------------------------
+# Applications
+# ---------------------------------------------------------------------------
+sudo pacman -S --needed --noconfirm \
+    modem-manager-gui \
+    cmus \
+    libreoffice \
+    mpv \
+    mc \
+    evince \
+    firefox \
+    thunderbird \
+    tig \
+    neovim \
+    less \
+    go gopls \
+    cmake gettext \
+    nodejs npm \
+    ghostty kitty \
+    zed \
+    lazydocker lazygit
+
+yay -S --noconfirm --needed \
+    google-chrome \
+    sublime-text-4 \
+    google-cloud-cli
+
+# ---------------------------------------------------------------------------
+# Flatpak apps
+# ---------------------------------------------------------------------------
 sudo flatpak install -y flathub \
-	spotify \
-	slack \
-	com.valvesoftware.Steam \
-	im.riot.Riot \
-	org.telegram.desktop \
-	org.telegram.desktop.webview \
-	com.bitwarden.desktop \
-	app/com.usebruno.Bruno/x86_64/stable \
-	app/io.beekeeperstudio.Studio/x86_64/stable
+    spotify \
+    slack \
+    com.valvesoftware.Steam \
+    im.riot.Riot \
+    org.telegram.desktop \
+    org.telegram.desktop.webview \
+    com.bitwarden.desktop \
+    app/com.usebruno.Bruno/x86_64/stable \
+    app/io.beekeeperstudio.Studio/x86_64/stable
 
-# Enable Services
+# ---------------------------------------------------------------------------
+# UFW firewall
+# ---------------------------------------------------------------------------
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow ssh
+sudo ufw enable
+
+# ---------------------------------------------------------------------------
+# Enable services
+# ---------------------------------------------------------------------------
+sudo systemctl enable --now ModemManager
+sudo systemctl enable --now avahi-daemon
+sudo systemctl enable --now acpid
 sudo systemctl enable --now cups.socket
 sudo systemctl enable --now cups
-sudo systemctl enable ly@tty1
 sudo systemctl enable --now bluetooth
+sudo systemctl enable --now power-profiles-daemon
+sudo systemctl enable --now fwupd
+sudo systemctl enable ly@tty1
+
+echo ""
+echo "Done! Reboot to start Hyprland via ly."
 
