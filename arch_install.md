@@ -90,7 +90,7 @@ cryptsetup luksFormat -v -s 512 -h sha512 /dev/nvme0n1p3
 cryptsetup luksDump /dev/nvme0n1p3
 
 # Open the encrypted container
-cryptsetup open /dev/nvme0n1p3 cryptlvm
+cryptsetup open /dev/nvme0n1p3 rootlvm
 ```
 
 ---
@@ -99,10 +99,10 @@ cryptsetup open /dev/nvme0n1p3 cryptlvm
 
 ```bash
 # Create physical volume
-pvcreate /dev/mapper/cryptlvm
+pvcreate /dev/mapper/rootlvm
 
 # Create volume group
-vgcreate vg0 /dev/mapper/cryptlvm
+vgcreate vg0 /dev/mapper/rootlvm
 
 # Create swap (32GB)
 lvcreate -L 32G vg0 -n swap
@@ -223,7 +223,7 @@ blkid /dev/nvme0n1p3
 Edit `/etc/default/grub`, find `GRUB_CMDLINE_LINUX` and set:
 
 ```
-GRUB_CMDLINE_LINUX="cryptdevice=UUID=<YOUR-UUID-HERE>:cryptlvm root=/dev/vg0/root"
+GRUB_CMDLINE_LINUX="cryptdevice=UUID=<YOUR-UUID-HERE>:rootlvm root=/dev/vg0/root"
 ```
 
 Also uncomment:
