@@ -18,6 +18,7 @@ iwctl
 
 ping archlinux.org
 timedatectl set-ntp true
+loadkeys uk
 ```
 
 ---
@@ -121,13 +122,8 @@ mkswap /dev/vg0/swap
 
 ```bash
 mount /dev/vg0/root /mnt
-
-mkdir /mnt/boot
-mount /dev/nvme0n1p2 /mnt/boot
-
-mkdir /mnt/boot/efi
-mount /dev/nvme0n1p1 /mnt/boot/efi
-
+mount --mkdir /dev/nvme0n1p2 /mnt/boot
+mount --mkdir /dev/nvme0n1p1 /mnt/boot/efi
 swapon /dev/vg0/swap
 ```
 
@@ -163,6 +159,9 @@ arch-chroot /mnt
 ## System Configuration
 
 ```bash
+# Keyboard layout
+echo "KEYMAP=uk" > /etc/vconsole.conf
+
 # Timezone
 ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 hwclock --systohc
@@ -191,10 +190,10 @@ passwd
 Edit `/etc/mkinitcpio.conf` — find the `HOOKS` line and make it:
 
 ```
-HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt lvm2 filesystems fsck)
+HOOKS=(base systemd autodetect microcode modconf kms keyboard sd-vconsole block sd-encrypt lvm2 filesystems fsck)
 ```
 
-The critical additions are **`encrypt`** and **`lvm2`**, placed before `filesystems`.
+Key points: `systemd` replaces `udev`, `sd-encrypt` replaces `encrypt`, `sd-vconsole` replaces `keymap consolefont`, and `lvm2` stays before `filesystems`.
 
 ```bash
 mkinitcpio -P
@@ -211,24 +210,28 @@ grub-install --target=x86_64-efi \
   --recheck
 ```
 
-### Get the LUKS UUID
+### Set up crypttab
 
 ```bash
-blkid /dev/nvme0n1p3
-# Copy the UUID value
+echo "root UUID=$(blkid -s UUID -o value /dev/nvme0n1p3) none luks" >> /etc/crypttab
 ```
 
-### Edit GRUB defaults
+### Inject the LUKS UUID into GRUB defaults
 
-Edit `/etc/default/grub`, find `GRUB_CMDLINE_LINUX` and set:
+First set `GRUB_ENABLE_CRYPTODISK`:
+```bash
+sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/' /etc/default/grub
+```
 
-```
-GRUB_CMDLINE_LINUX="cryptdevice=UUID=<YOUR-UUID-HERE>:rootlvm root=/dev/vg0/root"
+Then inject the UUID and set the cmdline:
+```bash
+sed -i "s|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"rd.luks.name=$(blkid -s UUID -o value /dev/nvme0n1p3)=root root=/dev/mapper/root\"|" /etc/default/grub
 ```
 
-Also uncomment:
-```
-GRUB_ENABLE_CRYPTODISK=y
+Verify it looks correct before continuing:
+```bash
+grep GRUB_CMDLINE_LINUX /etc/default/grub
+grep GRUB_ENABLE_CRYPTODISK /etc/default/grub
 ```
 
 ### Generate GRUB config
