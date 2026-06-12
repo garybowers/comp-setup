@@ -133,9 +133,9 @@ sudo pacman -S --needed --noconfirm \
     uwsm ly \
     gtk3 gtk4 \
     hyprland hyprlock hyprpolkitagent hypridle hyprpaper hyprcursor hyprutils \
-    slurp grim swappy \
+    slurp grim swappy hyprpicker \
     rofi-wayland rofi-calc rofi-emoji \
-    waybar \
+    waybar cava \
     nautilus \
     xdg-desktop-portal-hyprland xdg-desktop-portal-gtk \
     wl-clipboard cliphist \
@@ -178,7 +178,9 @@ sudo pacman -S --needed --noconfirm \
 yay -S --noconfirm --needed \
     google-chrome \
     sublime-text-4 \
-    google-cloud-cli
+    google-cloud-cli \
+    grimblast-git \
+    wallust
 
 # ---------------------------------------------------------------------------
 # Flatpak apps

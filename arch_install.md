@@ -133,8 +133,8 @@ swapon /dev/vg0/swap
 
 ```bash
 pacstrap /mnt base base-devel linux linux-firmware \
-  lvm2 grub efibootmgr \
-  networkmanager vim sudo
+  lvm2 cryptsetup grub efibootmgr amd-ucode intel-ucode \
+  networkmanager vim sudo bash bash-completion curl
 ```
 
 ---
@@ -190,10 +190,10 @@ passwd
 Edit `/etc/mkinitcpio.conf` — find the `HOOKS` line and make it:
 
 ```
-HOOKS=(base systemd autodetect microcode modconf kms keyboard sd-vconsole block sd-encrypt lvm2 filesystems fsck)
+HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt lvm2 filesystems fsck)
 ```
 
-Key points: `systemd` replaces `udev`, `sd-encrypt` replaces `encrypt`, `sd-vconsole` replaces `keymap consolefont`, and `lvm2` stays before `filesystems`.
+Key points: this uses the classic **udev** hooks. `encrypt` (busybox `cryptsetup`) unlocks the LUKS container and `lvm2` activates the volume group inside it, so the order must be `... block encrypt lvm2 filesystems ...`. `keymap consolefont` load your `/etc/vconsole.conf` keymap into early userspace so you can type the passphrase on a non-US layout.
 
 ```bash
 mkinitcpio -P
@@ -210,28 +210,20 @@ grub-install --target=x86_64-efi \
   --recheck
 ```
 
-### Set up crypttab
+### Set the kernel cmdline
 
+No `/etc/crypttab` entry is needed for the root device — the `encrypt` hook unlocks it from the kernel cmdline. (crypttab is only for *additional* encrypted volumes unlocked after boot.)
+
+`GRUB_ENABLE_CRYPTODISK` is **not** needed either: `/boot` is an unencrypted partition, so GRUB never unlocks anything — it loads the kernel, then the `encrypt` hook in the initramfs prompts for the passphrase.
+
+Point the `encrypt` hook at the LUKS partition (`cryptdevice=UUID=…:rootlvm`) and set `root` to the LVM logical volume:
 ```bash
-echo "root UUID=$(blkid -s UUID -o value /dev/nvme0n1p3) none luks" >> /etc/crypttab
-```
-
-### Inject the LUKS UUID into GRUB defaults
-
-First set `GRUB_ENABLE_CRYPTODISK`:
-```bash
-sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/' /etc/default/grub
-```
-
-Then inject the UUID and set the cmdline:
-```bash
-sed -i "s|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"rd.luks.name=$(blkid -s UUID -o value /dev/nvme0n1p3)=root root=/dev/mapper/root\"|" /etc/default/grub
+sed -i "s|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$(blkid -s UUID -o value /dev/nvme0n1p3):rootlvm root=/dev/vg0/root\"|" /etc/default/grub
 ```
 
 Verify it looks correct before continuing:
 ```bash
 grep GRUB_CMDLINE_LINUX /etc/default/grub
-grep GRUB_ENABLE_CRYPTODISK /etc/default/grub
 ```
 
 ### Generate GRUB config
@@ -268,23 +260,19 @@ swapoff /dev/vg0/swap
 reboot
 ```
 
-Remove the USB drive when the screen goes blank. GRUB will prompt for your LUKS passphrase on every boot before handing off to the system.
+Remove the USB drive when the screen goes blank. GRUB loads the kernel from the unencrypted `/boot`, then the **initramfs** (`encrypt` hook) prompts for your LUKS passphrase on every boot before handing off to the system.
 
 ---
 
 ## ThinkPad X1 Carbon Gen 9 — Post-Install Tips
 
-| Thing | Package |
-|---|---|
-| Intel microcode (auto-applied via `microcode` hook) | `intel-ucode` — add if not pulled in |
-| Wifi (Intel AX201) | included in `linux-firmware` |
-| Touchpad | `xf86-input-libinput` if you add X11 |
-| Throttling fix | `throttled` (AUR) |
-| Power management | `tlp` + `tlp-rdw` |
-| Fingerprint reader | `fprintd` + `libfprint` |
+| Thing                                           | Package                                                           |
+| -------------------------------------------------| -------------------------------------------------------------------|
+| CPU microcode (bundled by the `microcode` hook) | `amd-ucode` / `intel-ucode` — both installed in pacstrap          |
+| Wifi (Intel AX201)                              | included in `linux-firmware`                                      |
+| Touchpad                                        | `xf86-input-libinput` if you add X11                              |
+| Throttling fix (Intel)                          | `thermald`; the older `throttled` (AUR) is rarely needed on Gen 9 |
+| Power management                                | `power-profiles-daemon`                                           |
+| Fingerprint reader                              | `fprintd` + `libfprint`                                           |
 
-Install `intel-ucode` now if not already present:
-```bash
-pacman -S intel-ucode
-grub-mkconfig -o /boot/grub/grub.cfg
-```
+`amd-ucode` and `intel-ucode` are installed in the `pacstrap` step above, and with `autodetect` the `microcode` hook already bundled your CPU's microcode into the initramfs when you ran `mkinitcpio -P` — nothing more to do.
