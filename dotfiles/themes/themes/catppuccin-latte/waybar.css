@@ -1,0 +1,16 @@
+/* Catppuccin Latte — light. Palette only. (bg light, fg dark, hi dark) */
+@define-color bg     #eff1f5;
+@define-color bgdeep #e6e9ef;
+@define-color fg     #4c4f69;
+@define-color dim    #9ca0b0;
+@define-color accent #1e66f5;
+@define-color glow   #7287fd;
+@define-color red    #d20f39;
+@define-color green  #40a02b;
+@define-color teal   #179299;
+@define-color purple #8839ef;
+@define-color orange #fe640b;
+@define-color yellow #df8e1d;
+@define-color cyan   #04a5e5;
+@define-color crit   #d20f39;
+@define-color hi     #11111b;

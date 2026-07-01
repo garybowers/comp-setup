@@ -1,240 +1,300 @@
+/* ============================================================
+   Waybar — shared LAYOUT (theme-agnostic).
+   Colors come from the active theme's palette via @define-color.
+   set-theme.sh symlinks theme.css -> themes/<active>/waybar.css
+   @import MUST be first (GTK CSS rule); it defines @bg @fg @accent ... .
+   ============================================================ */
+@import "theme.css";
+
 * {
-  /* `otf-font-awesome` is required to be installed for icons */
-  font-family: "Noto Sans Mono";
-  font-size: 14px;
+  /* `JetBrainsMono Nerd Font` required for the glyphs */
+  font-family: "JetBrainsMono Nerd Font", "Noto Sans Mono", monospace;
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 0;
 }
 
+/* Transparent bar so only the islands show (floating look) */
 window#waybar {
-  background-color: rgba(43, 48, 59, 0.5);
-  border-bottom: 3px solid rgba(100, 114, 125, 0.5);
-  color: #ffffff;
+  background: transparent;
+  color: @fg;
   transition-property: background-color;
-  transition-duration: 0.5s;
+  transition-duration: 0.4s;
 }
 
 window#waybar.hidden {
   opacity: 0.2;
 }
 
-/*
-window#waybar.empty {
-    background-color: transparent;
-}
-window#waybar.solo {
-    background-color: #FFFFFF;
-}
-*/
-
-window#waybar.termite {
-  background-color: #3f3f3f;
-}
-
-window#waybar.chromium {
-  background-color: #000000;
-  border: none;
+/* ---------- Islands: each module group is a neon-edged panel ---------- */
+.modules-center,
+#workspaces,
+#player,
+#media,
+#net,
+#stats,
+#system {
+  background-color: alpha(@bg, 0.82);
+  border: 1px solid alpha(@accent, 0.30);
+  border-radius: 11px;
+  padding: 0 6px;
+  margin: 1px 4px;
+  box-shadow: 0 0 10px alpha(@glow, 0.35), inset 0 0 4px alpha(@accent, 0.08);
 }
 
-button {
-  /* Use box-shadow instead of border so the text isn't offset */
-  box-shadow: inset 0 -3px transparent;
-  /* Avoid rounded borders under each button name */
-  border: none;
-  border-radius: 0;
+/* NOTE: the continuous island-breathe + border-cycle animations were removed —
+   animating box-shadow/border on every island (x3 monitors) repaints every
+   frame and pinned waybar CPU. The static neon glow above stays for free.
+   Localised/stateful animations (workspace pulse, power flicker, temp/idle
+   alerts) are cheap and remain below. */
+
+/* The left/right containers just hold their islands (no panel of their own) */
+.modules-left,
+.modules-right {
+  background: transparent;
 }
 
-/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
-button:hover {
-  background: inherit;
-  box-shadow: inset 0 -3px #ffffff;
+/* ---------- Hover popup / calendar ---------- */
+tooltip {
+  background: alpha(@bgdeep, 0.96);
+  border: 1px solid alpha(@accent, 0.45);
+  border-radius: 12px;
+  box-shadow: 0 0 18px alpha(@glow, 0.55);
 }
 
-/* you can set a style on hover for any module like this */
-#pulseaudio:hover {
-  /* background-color: #a37800; */
+tooltip label {
+  color: @fg;
+  padding: 6px;
 }
 
-#workspaces button {
-  padding: 0 5px;
-  background-color: transparent;
-  color: #ffffff;
-}
-
-#workspaces button:hover {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-#workspaces button.focused {
-  background-color: #64727d;
-}
-
-#workspaces button.active {
-  background-color: #4c7899; /* A distinct highlight color */
-}
-
-#workspaces button.urgent {
-  background-color: #eb4d4b;
-}
-
-#mode {
-  background-color: #64727d;
-  box-shadow: inset 0 -3px #ffffff;
-}
-
+/* ---------- Shared module box ---------- */
+#mpris,
+#custom-cava,
 #clock,
-#battery,
+#idle_inhibitor,
+#pulseaudio,
+#network,
+#bluetooth,
+#power-profiles-daemon,
 #cpu,
+#custom-gpu,
 #memory,
 #disk,
 #temperature,
 #backlight,
-#network,
-#bluetooth,
-#pulseaudio,
-#wireplumber,
-#custom-media,
+#battery,
 #tray,
-#mode,
-#idle_inhibitor,
-#scratchpad,
-#power-profiles-daemon,
-#mpd {
-  padding: 0 10px;
-  color: #ffffff;
+#custom-power {
+  padding: 0 9px;
+  margin: 0;
+  background: transparent;
+  transition: text-shadow 0.2s ease, color 0.2s ease, background 0.2s ease;
 }
 
-#window,
-#workspaces {
-  margin: 0 4px;
+/* Hover: soft neon tint under the cursor */
+#cpu:hover, #memory:hover, #disk:hover, #temperature:hover,
+#network:hover, #bluetooth:hover, #pulseaudio:hover,
+#backlight:hover, #battery:hover, #clock:hover,
+#power-profiles-daemon:hover, #idle_inhibitor:hover {
+  background: alpha(@accent, 0.10);
+  border-radius: 8px;
 }
 
-/* If workspaces is the leftmost module, omit left margin */
-.modules-left > widget:first-child > #workspaces {
-  margin-left: 0;
-}
-
-/* If workspaces is the rightmost module, omit right margin */
-.modules-right > widget:last-child > #workspaces {
-  margin-right: 0;
-}
-
+/* ---------- Per-module colors + glow ---------- */
 #clock {
+  color: @accent;
+  font-weight: 700;
+  text-shadow: 0 0 6px alpha(@accent, 0.85);
+}
+
+#cpu {
+  color: @green;
+  text-shadow: 0 0 6px alpha(@green, 0.75);
+}
+
+#custom-gpu {
+  color: @teal;
+  text-shadow: 0 0 6px alpha(@teal, 0.8);
+}
+
+#memory {
+  color: @purple;
+  text-shadow: 0 0 6px alpha(@purple, 0.75);
+}
+
+#disk {
+  color: @red;
+  text-shadow: 0 0 6px alpha(@red, 0.75);
+}
+
+#temperature {
+  color: @orange;
+  text-shadow: 0 0 6px alpha(@orange, 0.75);
+}
+
+#temperature.critical {
+  color: @crit;
+  text-shadow: 0 0 12px alpha(@crit, 1);
+}
+
+@keyframes temp-alert {
+  from { color: @red;  text-shadow: 0 0 5px alpha(@red, 0.5); }
+  to   { color: @crit; text-shadow: 0 0 16px alpha(@crit, 1); }
+}
+
+#backlight {
+  color: @yellow;
+  text-shadow: 0 0 6px alpha(@yellow, 0.75);
 }
 
 #battery {
-  padding-right: 15px;
+  color: @glow;
+  text-shadow: 0 0 6px alpha(@glow, 0.75);
 }
 
 #battery.charging,
 #battery.plugged {
-  color: #26a65b;
-}
-
-@keyframes blink {
-  to {
-    background-color: #ffffff;
-    color: #000000;
-  }
-}
-
-/* Using steps() instead of linear as a timing function to limit cpu usage */
-#battery.critical:not(.charging) {
-  color: #f53c3c;
-  animation-name: blink;
-  animation-duration: 0.5s;
-  animation-timing-function: steps(12);
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-}
-
-#power-profiles-daemon {
-  padding-right: 15px;
-}
-
-#power-profiles-daemon.performance {
-  color: #f53c3c;
-}
-
-#power-profiles-daemon.balanced {
-  color: #2980b9;
-}
-
-#power-profiles-daemon.power-saver {
-  color: #2ecc71;
-}
-
-label:focus {
-  background-color: #000000;
-}
-
-#cpu {
-  color: #2ecc71;
-}
-
-#memory {
-  color: #a600ff;
-}
-
-#disk {
-  color: #ff00d4;
-}
-
-#backlight {
-  color: #ffffff;
+  color: @green;
+  text-shadow: 0 0 8px alpha(@green, 0.9);
 }
 
 #network {
-  color: #00ff00;
+  color: @cyan;
+  text-shadow: 0 0 6px alpha(@cyan, 0.8);
 }
 
 #network.disconnected {
-  background-color: #f53c3c;
+  color: @red;
+  text-shadow: 0 0 8px alpha(@red, 0.9);
 }
 
 #bluetooth {
-  color: #00e6ff;
+  color: @glow;
+  text-shadow: 0 0 6px alpha(@glow, 0.8);
 }
 
 #pulseaudio {
-  color: #f1c40f;
+  color: @yellow;
+  text-shadow: 0 0 6px alpha(@yellow, 0.8);
 }
 
 #pulseaudio.muted {
-  background-color: #90b1b1;
-  color: #2a5c45;
+  color: @dim;
+  text-shadow: none;
 }
 
-#wireplumber {
-  background-color: #fff0f5;
-  color: #000000;
+#power-profiles-daemon {
+  color: @purple;
+  text-shadow: 0 0 6px alpha(@purple, 0.7);
 }
 
-#wireplumber.muted {
-  background-color: #f53c3c;
+#power-profiles-daemon.performance {
+  color: @red;
+  text-shadow: 0 0 8px alpha(@red, 0.9);
 }
 
-#custom-media {
-  background-color: #66cc99;
-  color: #2a5c45;
-  min-width: 100px;
+#power-profiles-daemon.balanced {
+  color: @glow;
 }
 
-#custom-media.custom-spotify {
-  background-color: #66cc99;
+#power-profiles-daemon.power-saver {
+  color: @green;
 }
 
-#custom-media.custom-vlc {
-  background-color: #ffa000;
+#mpris {
+  color: @green;
+  text-shadow: 0 0 6px alpha(@green, 0.6);
 }
 
-#temperature {
-  color: #f0932b;
+#custom-cava {
+  color: @purple;
+  text-shadow: 0 0 8px alpha(@purple, 0.85);
+  padding: 0 8px;
 }
 
-#temperature.critical {
-  color: #eb4d4b;
+#idle_inhibitor {
+  color: @fg;
 }
 
+#idle_inhibitor.activated {
+  color: @red;
+  text-shadow: 0 0 10px alpha(@red, 0.95);
+}
+
+@keyframes idle-pulse {
+  from { text-shadow: 0 0 4px alpha(@red, 0.5); }
+  to   { text-shadow: 0 0 13px alpha(@red, 1); }
+}
+
+#custom-power {
+  color: @red;
+  text-shadow: 0 0 8px alpha(@red, 0.9);
+}
+
+/* Failing-neon-tube flicker */
+@keyframes neon-flicker {
+  0%   { opacity: 1;   text-shadow: 0 0 8px alpha(@red, 0.9); }
+  3%   { opacity: 0.3; text-shadow: none; }
+  6%   { opacity: 1;   text-shadow: 0 0 8px alpha(@red, 0.9); }
+  7%   { opacity: 0.6; }
+  9%   { opacity: 1; }
+  46%  { opacity: 1; }
+  47%  { opacity: 0.3; text-shadow: none; }
+  48%  { opacity: 1;   text-shadow: 0 0 8px alpha(@red, 0.9); }
+  83%  { opacity: 1; }
+  84%  { opacity: 0.5; text-shadow: 0 0 2px alpha(@red, 0.4); }
+  85%  { opacity: 1;   text-shadow: 0 0 8px alpha(@red, 0.9); }
+  100% { opacity: 1;   text-shadow: 0 0 8px alpha(@red, 0.9); }
+}
+
+#custom-power:hover {
+  color: @hi;
+  text-shadow: 0 0 12px alpha(@red, 1);
+}
+
+/* ---------- Workspaces ---------- */
+#workspaces {
+  padding: 0 4px;
+}
+
+#workspaces button {
+  padding: 0 8px;
+  margin: 1px 2px;
+  color: @dim;
+  background: transparent;
+  border-radius: 10px;
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+#workspaces button:hover {
+  color: @accent;
+  background: alpha(@accent, 0.12);
+  box-shadow: inset 0 0 0 1px alpha(@accent, 0.4);
+  text-shadow: 0 0 6px alpha(@accent, 0.8);
+}
+
+#workspaces button.active {
+  color: @accent;
+  background: alpha(@accent, 0.10);
+  text-shadow: 0 0 8px alpha(@accent, 1);
+  box-shadow: 0 0 8px alpha(@accent, 0.85);
+}
+
+@keyframes ws-pulse {
+  from { box-shadow: 0 0 4px alpha(@accent, 0.45); }
+  to   { box-shadow: 0 0 13px alpha(@accent, 1); }
+}
+
+#workspaces button.urgent {
+  color: @bg;
+  background: @red;
+  box-shadow: 0 0 10px alpha(@red, 0.9);
+}
+
+/* ---------- Tray ---------- */
 #tray {
+  padding: 0 8px;
 }
 
 #tray > .passive {
@@ -243,83 +303,80 @@ label:focus {
 
 #tray > .needs-attention {
   -gtk-icon-effect: highlight;
-  background-color: #eb4d4b;
 }
 
-#idle_inhibitor {
-  color: #ecf0f1;
+/* ---------- Critical battery blink ---------- */
+@keyframes blink {
+  to {
+    color: @bg;
+    background-color: @red;
+    text-shadow: none;
+  }
 }
 
-#idle_inhibitor.activated {
-  color: #ff0000;
+#battery.critical:not(.charging) {
+  color: @red;
+  border-radius: 8px;
+  animation-name: blink;
+  animation-duration: 0.8s;
+  animation-timing-function: steps(12);
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
-#mpd {
-  background-color: #66cc99;
-  color: #2a5c45;
-}
-
-#mpd.disconnected {
-  background-color: #f53c3c;
-}
-
-#mpd.stopped {
-  background-color: #90b1b1;
-}
-
-#mpd.paused {
-  background-color: #51a37a;
-}
-
-#language {
-  background: #00b093;
-  color: #740864;
-  padding: 0 5px;
-  margin: 0 5px;
-  min-width: 16px;
-}
-
-#keyboard-state {
-  background: #97e1ad;
-  color: #000000;
-  padding: 0 0px;
-  margin: 0 5px;
-  min-width: 16px;
-}
-
-#keyboard-state > label {
-  padding: 0 5px;
-}
-
-#keyboard-state > label.locked {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-#scratchpad {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-#scratchpad.empty {
-  background-color: transparent;
-}
-
+/* ---------- Privacy / surveillance indicators (neon glyph, no block) ---------- */
 #privacy {
-  padding: 0;
+  padding: 0 4px;
 }
 
 #privacy-item {
   padding: 0 5px;
-  color: white;
+  background: transparent;
 }
 
 #privacy-item.screenshare {
-  background-color: #cf5700;
+  color: @orange;
+  text-shadow: 0 0 8px alpha(@orange, 0.9);
 }
 
 #privacy-item.audio-in {
-  background-color: #1ca000;
+  color: @red;
+  text-shadow: 0 0 8px alpha(@red, 0.9);
 }
 
 #privacy-item.audio-out {
-  background-color: #0069d4;
+  color: @glow;
+  text-shadow: 0 0 8px alpha(@glow, 0.9);
+}
+
+/* brightness pulse (keeps each glyph's own colour) */
+@keyframes surveil {
+  from { opacity: 0.6; }
+  to   { opacity: 1; }
+}
+
+/* ---------- Themed power menu popup ---------- */
+menu {
+  background-color: alpha(@bgdeep, 0.97);
+  border: 1px solid alpha(@accent, 0.45);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+menu menuitem {
+  padding: 6px 20px;
+  border-radius: 6px;
+  color: @fg;
+  transition: all 0.15s ease;
+}
+
+menu menuitem:hover {
+  background-color: alpha(@red, 0.20);
+  color: @hi;
+}
+
+menu separator {
+  background-color: alpha(@accent, 0.25);
+  min-height: 1px;
+  margin: 3px 6px;
 }

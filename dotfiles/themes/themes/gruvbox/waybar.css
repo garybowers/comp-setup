@@ -1,0 +1,16 @@
+/* Gruvbox (dark, medium) — warm retro. Palette only. */
+@define-color bg     #282828;
+@define-color bgdeep #1d2021;
+@define-color fg     #ebdbb2;
+@define-color dim    #928374;
+@define-color accent #fabd2f;
+@define-color glow   #fe8019;
+@define-color red    #fb4934;
+@define-color green  #b8bb26;
+@define-color teal   #8ec07c;
+@define-color purple #d3869b;
+@define-color orange #fe8019;
+@define-color yellow #fabd2f;
+@define-color cyan   #83a598;
+@define-color crit   #fb4934;
+@define-color hi     #fbf1c7;

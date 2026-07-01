@@ -1,0 +1,10 @@
+/* Gruvbox (rofi colors). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #282828;
+    fg:      #ebdbb2;
+    cyan:    #fabd2f;
+    purple:  #d3869b;
+    pink:    #fb4934;
+    dim:     #928374;
+    sel:     rgba(250,189,47,0.16);
+}

@@ -1,0 +1,11 @@
+/* Tokyo Night — Cyberpunk neon  (rofi colors) */
+/* Imported by ~/.config/rofi/config.rasi via:  @import "theme.rasi" */
+* {
+    bg:      #1a1b26;
+    fg:      #c0caf5;
+    cyan:    #7dcfff;
+    purple:  #bb9af7;
+    pink:    #f7768e;
+    dim:     #565f89;
+    sel:     rgba(125,207,255,0.14);
+}

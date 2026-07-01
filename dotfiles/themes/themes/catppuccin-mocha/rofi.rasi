@@ -1,0 +1,10 @@
+/* Catppuccin Mocha (rofi colors). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #1e1e2e;
+    fg:      #cdd6f4;
+    cyan:    #89b4fa;
+    purple:  #cba6f7;
+    pink:    #f38ba8;
+    dim:     #6c7086;
+    sel:     rgba(137,180,250,0.16);
+}

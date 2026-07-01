@@ -1,0 +1,10 @@
+/* Catppuccin Latte (rofi colors). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #eff1f5;
+    fg:      #4c4f69;
+    cyan:    #1e66f5;
+    purple:  #8839ef;
+    pink:    #d20f39;
+    dim:     #9ca0b0;
+    sel:     rgba(30,102,245,0.14);
+}

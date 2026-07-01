@@ -1,0 +1,10 @@
+/* Nord (rofi colors). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #2e3440;
+    fg:      #d8dee9;
+    cyan:    #88c0d0;
+    purple:  #b48ead;
+    pink:    #bf616a;
+    dim:     #4c566a;
+    sel:     rgba(136,192,208,0.16);
+}
