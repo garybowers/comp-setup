@@ -71,8 +71,28 @@ sudo pacman -S --noconfirm --needed \
     modemmanager \
     avahi \
     btop curl wget \
-    cups cups-pdf cups-pk-helper \
+    cups cups-pdf cups-pk-helper system-config-printer \
     flatpak
+
+# ---------------------------------------------------------------------------
+# Custom internal CA (bowers1 intermediate)
+# ---------------------------------------------------------------------------
+sudo mkdir -p /etc/ca-certificates/trust-source/anchors
+sudo bash -c 'cat <<EOF > /etc/ca-certificates/trust-source/anchors/b1-int.crt
+-----BEGIN CERTIFICATE-----
+MIIBxTCCAWugAwIBAgIRAOXhNfpes999inSG8vDHN9swCgYIKoZIzj0EAwIwLDEQ
+MA4GA1UEChMHYm93ZXJzMTEYMBYGA1UEAxMPYm93ZXJzMSBSb290IENBMB4XDTIz
+MTAxNzEwMTMxMVoXDTMzMTAxNDEwMTMxMVowNDEQMA4GA1UEChMHYm93ZXJzMTEg
+MB4GA1UEAxMXYm93ZXJzMSBJbnRlcm1lZGlhdGUgQ0EwWTATBgcqhkjOPQIBBggq
+hkjOPQMBBwNCAATRX7NovkKvA/yIgAMBhdcKZx3AmE/dQyI5RxmG5StH21HcCQ6p
+MmxPc8de/ZsU6tMaS+m+77SnIxmJF6932mWXo2YwZDAOBgNVHQ8BAf8EBAMCAQYw
+EgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUyY9w2vKv+/qTqR5a7t/aDYhD
+1GYwHwYDVR0jBBgwFoAUmL0cS0h1Wgqceb33bULMKELW3zUwCgYIKoZIzj0EAwID
+SAAwRQIgWlp024IxTnDtGuRTb4NKtP76e23P5NEMlaH5jYg6IhACIQDesnJxjvtU
+NFj/moNHOw3Izna3lsVlTtCVtSnDDzjhmw==
+-----END CERTIFICATE-----
+EOF'
+sudo trust extract-compat
 
 # ---------------------------------------------------------------------------
 # Printer polkit rule (allows wheel group to manage printers without password)
@@ -183,6 +203,20 @@ yay -S --noconfirm --needed \
     wallust
 
 # ---------------------------------------------------------------------------
+# Virtualisation (KVM/QEMU + libvirt + virt-manager)
+# ---------------------------------------------------------------------------
+sudo pacman -S --needed --noconfirm \
+    virt-manager qemu-desktop libvirt edk2-ovmf dnsmasq swtpm
+sudo usermod -aG libvirt "$(whoami)"
+
+# ---------------------------------------------------------------------------
+# Docker (with buildx and compose)
+# ---------------------------------------------------------------------------
+sudo pacman -S --needed --noconfirm \
+    docker docker-buildx docker-compose
+sudo usermod -aG docker "$(whoami)"
+
+# ---------------------------------------------------------------------------
 # Flatpak apps
 # ---------------------------------------------------------------------------
 sudo flatpak install -y flathub \
@@ -215,7 +249,29 @@ sudo systemctl enable --now cups
 sudo systemctl enable --now bluetooth
 sudo systemctl enable --now power-profiles-daemon
 sudo systemctl enable --now fwupd
+sudo systemctl enable --now libvirtd.service
+sudo systemctl enable --now docker.socket
 sudo systemctl enable ly@tty1
+
+# ---------------------------------------------------------------------------
+# libvirt virtual bridge network (NAT via virbr10 on 192.168.100.0/24)
+# ---------------------------------------------------------------------------
+if ! sudo virsh net-info vmbr &>/dev/null; then
+    sudo virsh net-define /dev/stdin <<'EOF'
+<network>
+  <name>vmbr</name>
+  <forward mode='nat'/>
+  <bridge name='virbr10' stp='on' delay='0'/>
+  <ip address='192.168.100.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.100.2' end='192.168.100.254'/>
+    </dhcp>
+  </ip>
+</network>
+EOF
+fi
+sudo virsh net-autostart vmbr
+sudo virsh net-start vmbr 2>/dev/null || true
 
 echo ""
 echo "Done! Reboot to start Hyprland via ly."
