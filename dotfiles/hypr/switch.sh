@@ -18,8 +18,13 @@ LAPTOP="eDP-1"
 lid_state="$(cat /proc/acpi/button/lid/*/state 2>/dev/null || true)"
 
 enable_laptop() {
-	hyprctl dispatch dpms on
 	hyprctl eval 'hl.monitor({ output = "eDP-1", disabled = false })'
+	# Re-enabling the output leaves it DPMS-off. Wake it -- but dpms is
+	# toggle-only under the Lua config, so only toggle when eDP-1 is actually
+	# off, otherwise we'd darken it (and never touch the external monitors).
+	if [[ "$(hyprctl monitors -j | jq -r '.[] | select(.name=="eDP-1") | .dpmsStatus')" == "false" ]]; then
+		hyprctl eval 'hl.dispatch(hl.dsp.dpms({ monitor = "eDP-1" }))'
+	fi
 }
 
 disable_laptop() {
