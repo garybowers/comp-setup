@@ -3,7 +3,7 @@
 # so all my systems stay consistent.
 #
 # Installs, by copying real files (NOT symlinks back into this repo):
-#   hypr/    hyprland.lua, hypridle.conf, hyprpaper.conf, hyprlock.conf, switch.sh
+#   hypr/    hyprland.lua, hypridle.conf, hyprpaper.conf, hyprlock.conf, switch.sh, dpms-resume.sh
 #   kitty/   kitty.conf
 #   rofi/    config.rasi
 #   waybar/  config.jsonc, style.css, power_menu.xml, scripts/
@@ -63,7 +63,7 @@ if [ -f "$SRC/systemd/user/waybar.service" ]; then
 fi
 
 # executable bits on the scripts
-chmod +x "$CFG/hypr/switch.sh" "$CFG/themes/set-theme.sh" 2>/dev/null || true
+chmod +x "$CFG/hypr/switch.sh" "$CFG/hypr/dpms-resume.sh" "$CFG/themes/set-theme.sh" 2>/dev/null || true
 chmod +x "$CFG"/waybar/scripts/*.sh 2>/dev/null || true
 
 # Apply the theme -> creates theme.css / theme.conf / theme.rasi / current-wallpaper,
