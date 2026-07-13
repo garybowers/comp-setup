@@ -125,8 +125,13 @@ sudo pacman -S --noconfirm --needed \
     wiremix easyeffects \
     zam-plugins-lv2 lsp-plugins-lv2 fluidsynth mda.lv2
 
-# EasyEffects presets
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
+# EasyEffects presets (skip if presets are already installed)
+if compgen -G "$HOME/.config/easyeffects/output/*.json" > /dev/null; then
+    echo "EasyEffects presets already installed, skipping"
+else
+    echo "Installing EasyEffects presets"
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
+fi
 
 # ---------------------------------------------------------------------------
 # Fonts (targeted selection — avoids pulling in all of nerd-fonts)
@@ -150,7 +155,7 @@ sudo pacman -S --noconfirm --needed \
 # Hyprland & Wayland desktop
 # ---------------------------------------------------------------------------
 sudo pacman -S --needed --noconfirm \
-    uwsm ly \
+    uwsm ly greetd-tuigreet \
     gtk3 gtk4 \
     hyprland hyprlock hyprpolkitagent hypridle hyprpaper hyprcursor hyprutils \
     slurp grim swappy hyprpicker \
