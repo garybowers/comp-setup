@@ -187,14 +187,6 @@ sudo pacman -S --needed --noconfirm \
     wf-recorder wtype
 
 # ---------------------------------------------------------------------------
-# Install yay (AUR helper)
-# ---------------------------------------------------------------------------
-step "Installing yay (AUR helper)"
-if ! command -v yay &>/dev/null; then
-    aurinst yay
-fi
-
-# ---------------------------------------------------------------------------
 # Applications
 # ---------------------------------------------------------------------------
 step "Installing applications"
@@ -217,13 +209,6 @@ sudo pacman -S --needed --noconfirm \
     zed \
     lazydocker lazygit
 
-yay -S --noconfirm --needed \
-    google-chrome \
-    sublime-text-4 \
-    google-cloud-cli \
-    grimblast-git \
-    wallust
-
 # ---------------------------------------------------------------------------
 # Virtualisation (KVM/QEMU + libvirt + virt-manager)
 # ---------------------------------------------------------------------------
@@ -239,21 +224,6 @@ step "Installing Docker"
 sudo pacman -S --needed --noconfirm \
     docker docker-buildx docker-compose
 sudo usermod -aG docker "$(whoami)"
-
-# ---------------------------------------------------------------------------
-# Flatpak apps
-# ---------------------------------------------------------------------------
-step "Installing Flatpak applications"
-sudo flatpak install -y flathub \
-    spotify \
-    slack \
-    com.valvesoftware.Steam \
-    im.riot.Riot \
-    org.telegram.desktop \
-    org.telegram.desktop.webview \
-    com.bitwarden.desktop \
-    app/com.usebruno.Bruno/x86_64/stable \
-    app/io.beekeeperstudio.Studio/x86_64/stable
 
 # ---------------------------------------------------------------------------
 # UFW firewall
@@ -300,6 +270,47 @@ EOF
 fi
 sudo virsh net-autostart vmbr
 sudo virsh net-start vmbr 2>/dev/null || true
+
+# ---------------------------------------------------------------------------
+# AUR & Flatpak apps (run last — non-critical)
+# ---------------------------------------------------------------------------
+# These pull from the AUR and Flathub, the most failure-prone steps (network,
+# upstream builds). They run last and never abort the script, so if any of
+# them fail the core system is already fully configured, enabled, and bootable.
+step "Installing AUR helper, AUR packages, and Flatpak apps (non-critical)"
+
+# yay (AUR helper) — prerequisite for the AUR packages
+if ! command -v yay &>/dev/null; then
+    aurinst yay || true
+fi
+
+# AUR packages
+if command -v yay &>/dev/null; then
+    yay -S --noconfirm --needed \
+        google-chrome \
+        sublime-text-4 \
+        google-cloud-cli \
+        grimblast-git \
+        wallust \
+      || echo "WARNING: one or more AUR packages failed to install"
+else
+    echo "WARNING: yay unavailable — skipped AUR packages"
+fi
+
+# Flatpak apps
+sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo \
+  || echo "WARNING: could not add the Flathub remote"
+sudo flatpak install -y flathub \
+    spotify \
+    slack \
+    com.valvesoftware.Steam \
+    im.riot.Riot \
+    org.telegram.desktop \
+    org.telegram.desktop.webview \
+    com.bitwarden.desktop \
+    app/com.usebruno.Bruno/x86_64/stable \
+    app/io.beekeeperstudio.Studio/x86_64/stable \
+  || echo "WARNING: some Flatpak apps failed to install"
 
 echo ""
 echo "Done! Reboot to start Hyprland via ly."
