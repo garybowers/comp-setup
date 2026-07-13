@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Print a highlighted step banner so progress is visible while the script runs.
+step() { printf '\n\033[1;34m==>\033[0m \033[1m%s\033[0m\n' "$*"; }
+
 # ---------------------------------------------------------------------------
 # Post-install setup: Arch Linux + Hyprland (Wayland + Pipewire)
 # ThinkPad X1 Carbon Gen 9
@@ -24,6 +27,7 @@ function aurinst {
 # ---------------------------------------------------------------------------
 # Mirrors & system update
 # ---------------------------------------------------------------------------
+step "Configuring fastest mirrors and updating the system"
 sudo pacman -S --noconfirm --needed reflector rsync git
 sudo reflector --country gb --fastest 10 --save /etc/pacman.d/mirrorlist
 sudo pacman -Suy --noconfirm
@@ -31,6 +35,7 @@ sudo pacman -Suy --noconfirm
 # ---------------------------------------------------------------------------
 # Timezone & NTP
 # ---------------------------------------------------------------------------
+step "Setting timezone (Europe/London) and enabling NTP"
 sudo ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 sudo mkdir -p /etc/systemd/timesyncd.conf.d
 sudo bash -c 'cat <<EOF > /etc/systemd/timesyncd.conf.d/local.conf
@@ -43,6 +48,7 @@ sudo timedatectl set-ntp true
 # ---------------------------------------------------------------------------
 # GPU detection — install appropriate Vulkan/VA-API drivers
 # ---------------------------------------------------------------------------
+step "Detecting GPU and installing graphics drivers"
 if lspci | grep -i "VGA\|3D" | grep -iq intel; then
     echo "Intel GPU detected"
     sudo pacman -S --noconfirm --needed vulkan-intel intel-media-driver
@@ -55,6 +61,7 @@ fi
 # ---------------------------------------------------------------------------
 # Core system packages
 # ---------------------------------------------------------------------------
+step "Installing core system packages"
 sudo pacman -S --noconfirm --needed \
     power-profiles-daemon \
     bluez bluez-utils bluetui \
@@ -77,6 +84,7 @@ sudo pacman -S --noconfirm --needed \
 # ---------------------------------------------------------------------------
 # Custom internal CA (bowers1 intermediate)
 # ---------------------------------------------------------------------------
+step "Installing internal CA certificate (bowers1)"
 sudo mkdir -p /etc/ca-certificates/trust-source/anchors
 sudo bash -c 'cat <<EOF > /etc/ca-certificates/trust-source/anchors/b1-int.crt
 -----BEGIN CERTIFICATE-----
@@ -97,6 +105,7 @@ sudo trust extract-compat
 # ---------------------------------------------------------------------------
 # Printer polkit rule (allows wheel group to manage printers without password)
 # ---------------------------------------------------------------------------
+step "Adding passwordless printer-admin polkit rule"
 sudo bash -c 'cat <<EOF > /etc/polkit-1/rules.d/49-allow-passwordless-printer-admin.rules
 polkit.addRule(function(action, subject) {
     if (action.id == "org.opensuse.cupspkhelper.mechanism.all-edit" &&
@@ -109,16 +118,19 @@ EOF'
 # ---------------------------------------------------------------------------
 # mDNS / NSSwitch fix for network printing discovery
 # ---------------------------------------------------------------------------
+step "Enabling mDNS hostname resolution for printing"
 sudo sed -i 's/hosts:\ mymachines\ resolve\ \[!UNAVAIL=return\]\ files\ myhostname\ dns/hosts: mymachines mdns [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/g' /etc/nsswitch.conf
 
 # ---------------------------------------------------------------------------
 # Bluetooth experimental features (needed for some BT audio profiles)
 # ---------------------------------------------------------------------------
+step "Enabling Bluetooth experimental features"
 sudo sed -i 's/#Experimental\ =\ false/Experimental = true/g' /etc/bluetooth/main.conf
 
 # ---------------------------------------------------------------------------
 # Pipewire audio stack
 # ---------------------------------------------------------------------------
+step "Installing PipeWire audio stack"
 sudo pacman -S --noconfirm --needed \
     pipewire pipewire-audio pipewire-pulse pipewire-jack \
     pavucontrol wireplumber \
@@ -126,6 +138,7 @@ sudo pacman -S --noconfirm --needed \
     zam-plugins-lv2 lsp-plugins-lv2 fluidsynth mda.lv2
 
 # EasyEffects presets (skip if presets are already installed)
+step "Setting up EasyEffects presets"
 if compgen -G "$HOME/.config/easyeffects/output/*.json" > /dev/null; then
     echo "EasyEffects presets already installed, skipping"
 else
@@ -136,6 +149,7 @@ fi
 # ---------------------------------------------------------------------------
 # Fonts (targeted selection — avoids pulling in all of nerd-fonts)
 # ---------------------------------------------------------------------------
+step "Installing fonts"
 sudo pacman -S --noconfirm --needed \
     ttf-ibm-plex \
     ttf-liberation \
@@ -154,6 +168,7 @@ sudo pacman -S --noconfirm --needed \
 # ---------------------------------------------------------------------------
 # Hyprland & Wayland desktop
 # ---------------------------------------------------------------------------
+step "Installing Hyprland and the Wayland desktop"
 sudo pacman -S --needed --noconfirm \
     uwsm ly greetd-tuigreet \
     gtk3 gtk4 \
@@ -174,6 +189,7 @@ sudo pacman -S --needed --noconfirm \
 # ---------------------------------------------------------------------------
 # Install yay (AUR helper)
 # ---------------------------------------------------------------------------
+step "Installing yay (AUR helper)"
 if ! command -v yay &>/dev/null; then
     aurinst yay
 fi
@@ -181,6 +197,7 @@ fi
 # ---------------------------------------------------------------------------
 # Applications
 # ---------------------------------------------------------------------------
+step "Installing applications"
 sudo pacman -S --needed --noconfirm \
     modem-manager-gui \
     cmus \
@@ -210,6 +227,7 @@ yay -S --noconfirm --needed \
 # ---------------------------------------------------------------------------
 # Virtualisation (KVM/QEMU + libvirt + virt-manager)
 # ---------------------------------------------------------------------------
+step "Installing virtualisation stack (KVM/QEMU/libvirt)"
 sudo pacman -S --needed --noconfirm \
     virt-manager qemu-desktop libvirt edk2-ovmf dnsmasq swtpm
 sudo usermod -aG libvirt "$(whoami)"
@@ -217,6 +235,7 @@ sudo usermod -aG libvirt "$(whoami)"
 # ---------------------------------------------------------------------------
 # Docker (with buildx and compose)
 # ---------------------------------------------------------------------------
+step "Installing Docker"
 sudo pacman -S --needed --noconfirm \
     docker docker-buildx docker-compose
 sudo usermod -aG docker "$(whoami)"
@@ -224,6 +243,7 @@ sudo usermod -aG docker "$(whoami)"
 # ---------------------------------------------------------------------------
 # Flatpak apps
 # ---------------------------------------------------------------------------
+step "Installing Flatpak applications"
 sudo flatpak install -y flathub \
     spotify \
     slack \
@@ -238,6 +258,7 @@ sudo flatpak install -y flathub \
 # ---------------------------------------------------------------------------
 # UFW firewall
 # ---------------------------------------------------------------------------
+step "Configuring UFW firewall"
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 sudo ufw allow ssh
@@ -246,6 +267,7 @@ sudo ufw enable
 # ---------------------------------------------------------------------------
 # Enable services
 # ---------------------------------------------------------------------------
+step "Enabling system services"
 sudo systemctl enable --now ModemManager
 sudo systemctl enable --now avahi-daemon
 sudo systemctl enable --now acpid
@@ -261,6 +283,7 @@ sudo systemctl enable ly@tty1
 # ---------------------------------------------------------------------------
 # libvirt virtual bridge network (NAT via virbr10 on 192.168.100.0/24)
 # ---------------------------------------------------------------------------
+step "Configuring libvirt NAT bridge network (vmbr)"
 if ! sudo virsh net-info vmbr &>/dev/null; then
     sudo virsh net-define /dev/stdin <<'EOF'
 <network>
