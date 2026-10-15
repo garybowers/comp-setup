@@ -246,7 +246,13 @@ sudo systemctl enable --now cups
 sudo systemctl enable --now bluetooth
 sudo systemctl enable --now power-profiles-daemon
 sudo systemctl enable --now fwupd
-sudo systemctl enable --now libvirtd.service
+# libvirt and docker are socket-activated: they start on first use rather
+# than running (and waking the CPU) from boot
+sudo systemctl disable libvirtd.service
+# (disabling libvirtd.service also disables its log/lock sockets, so re-enable them)
+sudo systemctl enable --now libvirtd.socket \
+    virtlogd.socket virtlogd-admin.socket virtlockd.socket virtlockd-admin.socket
+sudo systemctl disable docker.service containerd.service
 sudo systemctl enable --now docker.socket
 sudo systemctl enable ly@tty1
 
@@ -293,6 +299,16 @@ SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="0", RUN+="/usr/lo
 SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="1", RUN+="/usr/local/bin/power-source-changed ac"
 EOF'
 sudo udevadm control --reload
+
+# Deepest PCIe link power saving (set at boot, so no bootloader changes needed)
+# and no NMI watchdog (a periodic timer that keeps waking the CPU)
+step "Enabling PCIe ASPM power saving and disabling NMI watchdog"
+sudo bash -c 'cat <<EOF > /etc/tmpfiles.d/pcie-aspm.conf
+w /sys/module/pcie_aspm/parameters/policy - - - - powersupersave
+EOF'
+sudo bash -c 'cat <<EOF > /etc/sysctl.d/99-power-saving.conf
+kernel.nmi_watchdog = 0
+EOF'
 
 # ---------------------------------------------------------------------------
 # libvirt virtual bridge network (NAT via virbr10 on 192.168.100.0/24)
