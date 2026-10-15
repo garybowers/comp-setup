@@ -6,7 +6,7 @@ step() { printf '\n\033[1;34m==>\033[0m \033[1m%s\033[0m\n' "$*"; }
 
 # ---------------------------------------------------------------------------
 # Post-install setup: Arch Linux + Hyprland (Wayland + Pipewire)
-# ThinkPad X1 Carbon Gen 9
+# ThinkPad X1 Carbon Gen 9 (Intel) / ThinkPad T14s Gen 4 (AMD)
 # ---------------------------------------------------------------------------
 
 # Install an AUR package into /tmp (cleaned up on reboot)
@@ -249,6 +249,50 @@ sudo systemctl enable --now fwupd
 sudo systemctl enable --now libvirtd.service
 sudo systemctl enable --now docker.socket
 sudo systemctl enable ly@tty1
+
+# ---------------------------------------------------------------------------
+# Battery / power saving
+# ---------------------------------------------------------------------------
+# ly's login animation keeps running on tty1 behind Hyprland and burns CPU
+step "Disabling ly login animation"
+sudo sed -i 's/^animation = .*/animation = none/' /etc/ly/config.ini
+
+# On AC plug/unplug: switch power profile and dim/restore screen brightness
+step "Installing AC/battery power profile + brightness switching"
+sudo bash -c 'cat <<'\''EOF'\'' > /usr/local/bin/power-source-changed
+#!/bin/sh
+# Called by udev on AC plug/unplug: $1 = battery | ac
+# battery: power-saver profile, remember brightness, dim to 40% if brighter
+# ac:      balanced profile, restore remembered brightness
+STATE=/run/power-source-brightness
+DIM=40
+
+case "$1" in
+battery)
+	powerprofilesctl set power-saver
+	if [ ! -f "$STATE" ]; then
+		cur=$(brightnessctl -m | cut -d, -f4 | tr -d %)
+		echo "$cur" > "$STATE"
+		[ "$cur" -gt "$DIM" ] && brightnessctl -q set "$DIM%"
+	fi
+	;;
+ac)
+	powerprofilesctl set balanced
+	if [ -f "$STATE" ]; then
+		brightnessctl -q set "$(cat "$STATE")%"
+		rm -f "$STATE"
+	fi
+	;;
+esac
+exit 0
+EOF'
+sudo chmod 755 /usr/local/bin/power-source-changed
+sudo bash -c 'cat <<EOF > /etc/udev/rules.d/99-power-profile.rules
+# Switch power profile and brightness on AC plug/unplug
+SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="0", RUN+="/usr/local/bin/power-source-changed battery"
+SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="1", RUN+="/usr/local/bin/power-source-changed ac"
+EOF'
+sudo udevadm control --reload
 
 # ---------------------------------------------------------------------------
 # libvirt virtual bridge network (NAT via virbr10 on 192.168.100.0/24)

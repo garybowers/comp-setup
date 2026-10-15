@@ -7,6 +7,9 @@
 #
 # Leak-safe: cava + sed run in the background and are killed on exit/signal,
 # so Waybar reloads don't orphan cava processes.
+#
+# Battery-friendly: cava only runs while some audio sink is RUNNING (polled
+# every 2s via pactl); otherwise it is stopped and the module is blank.
 
 command -v cava >/dev/null 2>&1 || { echo ""; exit 0; }
 
@@ -41,11 +44,28 @@ data_format = ascii
 ascii_max_range = 7
 CFG
 
-cleanup() { kill "$CAVA" "$SED" 2>/dev/null; rm -f "$config" "$fifo"; }
-trap cleanup EXIT INT TERM HUP
+CAVA= SED=
+stop_cava() {
+  [[ -n $CAVA ]] || return
+  kill "$CAVA" "$SED" 2>/dev/null; wait "$CAVA" "$SED" 2>/dev/null
+  CAVA= SED=
+  echo ""
+}
+start_cava() {
+  [[ -z $CAVA ]] || return
+  cava -p "$config" &        # writes raw digit frames to the fifo
+  CAVA=$!
+  sed -u "$dict" < "$fifo" & # maps digits -> glyphs, prints to stdout for Waybar
+  SED=$!
+}
+audio_playing() { pactl list short sinks 2>/dev/null | grep -q RUNNING; }
 
-cava -p "$config" &        # writes raw digit frames to the fifo
-CAVA=$!
-sed -u "$dict" < "$fifo" & # maps digits -> glyphs, prints to stdout for Waybar
-SED=$!
-wait
+cleanup() { stop_cava; rm -f "$config" "$fifo"; }
+trap cleanup EXIT
+trap 'exit 0' INT TERM HUP
+
+echo ""
+while :; do
+  if audio_playing; then start_cava; else stop_cava; fi
+  sleep 2 & wait $!
+done
