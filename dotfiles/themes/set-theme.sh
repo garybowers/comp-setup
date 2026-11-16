@@ -5,6 +5,7 @@
 #   waybar.css           imported by ~/.config/waybar/style.css
 #   kitty.conf           included by ~/.config/kitty/kitty.conf
 #   rofi.rasi            imported by ~/.config/rofi/config.rasi
+#   hyprlock.conf        sourced by ~/.config/hypr/hyprlock.conf (lock-screen colours)
 #   wallpapers/*.{jpg,png}   one or more wallpapers (random pick on switch)
 #
 # Switching re-points the stable symlinks each app imports, then live-reloads
@@ -41,6 +42,7 @@ echo "Switching to theme: $THEME"
 link "$SRC/waybar.css" "$HOME/.config/waybar/theme.css"
 link "$SRC/kitty.conf" "$HOME/.config/kitty/theme.conf"
 link "$SRC/rofi.rasi"  "$HOME/.config/rofi/theme.rasi"
+link "$SRC/hyprlock.conf" "$HOME/.config/hypr/hyprlock-theme.conf"
 
 # --- wallpaper: pick one from wallpapers/ (random when there are several) ---
 WALL=""

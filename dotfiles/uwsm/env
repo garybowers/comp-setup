@@ -1,0 +1,8 @@
+# Environment for uwsm-managed sessions ("Hyprland (uwsm-managed)" at login).
+# uwsm exports these to the whole session, including systemd-started services.
+# Keep in step with the hl.env() lines in ~/.config/hypr/hyprland.lua, which
+# cover sessions started without uwsm.
+export QT_QPA_PLATFORMTHEME=qt6ct
+export XCURSOR_THEME=Adwaita
+export XCURSOR_SIZE=24
+export HYPRCURSOR_SIZE=24

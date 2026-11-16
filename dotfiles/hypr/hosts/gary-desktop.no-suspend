@@ -1,0 +1,2 @@
+Marker file: hypridle.conf never suspends a host that has hosts/<hostname>.no-suspend.
+gary-desktop stays awake so it remains reachable remotely.

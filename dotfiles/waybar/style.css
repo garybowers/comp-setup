@@ -82,7 +82,7 @@ tooltip label {
 #disk,
 #temperature,
 #backlight,
-#battery,
+#custom-battery,
 #tray,
 #custom-power {
   padding: 0 9px;
@@ -94,7 +94,7 @@ tooltip label {
 /* Hover: soft neon tint under the cursor */
 #cpu:hover, #memory:hover, #disk:hover, #temperature:hover,
 #network:hover, #bluetooth:hover, #pulseaudio:hover,
-#backlight:hover, #battery:hover, #clock:hover,
+#backlight:hover, #custom-battery:hover, #clock:hover,
 #power-profiles-daemon:hover, #idle_inhibitor:hover {
   background: alpha(@accent, 0.10);
   border-radius: 8px;
@@ -147,13 +147,19 @@ tooltip label {
   text-shadow: 0 0 6px alpha(@yellow, 0.75);
 }
 
-#battery {
+#custom-recording {
+  color: @red;
+  text-shadow: 0 0 8px alpha(@red, 0.9);
+  padding: 0 8px;
+}
+
+#custom-battery {
   color: @glow;
   text-shadow: 0 0 6px alpha(@glow, 0.75);
 }
 
-#battery.charging,
-#battery.plugged {
+#custom-battery.charging,
+#custom-battery.plugged {
   color: @green;
   text-shadow: 0 0 8px alpha(@green, 0.9);
 }
@@ -314,7 +320,7 @@ tooltip label {
   }
 }
 
-#battery.critical:not(.charging) {
+#custom-battery.critical:not(.charging) {
   color: @red;
   border-radius: 8px;
   animation-name: blink;

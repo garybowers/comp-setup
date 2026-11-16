@@ -31,7 +31,7 @@
   },
   "group/system": {
     "orientation": "horizontal",
-    "modules": ["privacy", "power-profiles-daemon", "battery", "tray", "custom/power"]
+    "modules": ["custom/recording", "privacy", "power-profiles-daemon", "custom/battery", "tray", "custom/power"]
   },
   "ext/workspaces": {
     "all-outputs": false,
@@ -67,6 +67,14 @@
     "status-icons": {
       "paused": "⏸"
     }
+  },
+  // Shown only while a screen recording (Super+Shift+R) is running; click to stop.
+  "custom/recording": {
+    "exec": "pgrep -x wf-recorder >/dev/null && echo '● REC' || echo ''",
+    "interval": 2,
+    "format": "{}",
+    "tooltip": false,
+    "on-click": "pkill -INT -x wf-recorder"
   },
   "custom/cava": {
     "exec": "$HOME/.config/waybar/scripts/cava.sh",
@@ -124,13 +132,16 @@
     "format": " {free}"
   },
   "temperature": {
-    // "thermal-zone": 2,
-    // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
-    "critical-threshold": 80,
-    "on-click": "kitty -e watch -n 2 sensors",
-    // "format-critical": "{temperatureC}°C {icon}",
-    "format": "{icon} {temperatureC}°C",
-    "format-icons": [""]
+    // CPU sensor: the first path that exists on this machine is used.
+    //   AMD (k10temp), then Intel (coretemp)
+    "hwmon-path-abs": [
+      "/sys/devices/pci0000:00/0000:00:18.3/hwmon",
+      "/sys/devices/platform/coretemp.0/hwmon"
+    ],
+    "input-filename": "temp1_input",
+    "critical-threshold": 85,
+    "format": "{temperatureC}°C",
+    "format-critical": "{temperatureC}°C"
   },
   "backlight": {
     // "device": "acpi_video1",
@@ -139,20 +150,16 @@
     "format": "{icon} {percent}%",
     "format-icons": ["", "", "", "", "", "", "", "", ""]
   },
-  "battery": {
-    "states": {
-      // "good": 95,
-      "warning": 30,
-      "critical": 15
-    },
-    "format": "{capacity}% {icon}",
-    "format-full": "{capacity}% {icon}",
-    "format-charging": "{capacity}% ",
-    "format-plugged": "{capacity}% ",
-    "format-alt": "{time} {icon}",
-    // "format-good": "", // An empty format will hide the module
-    // "format-full": "",
-    "format-icons": ["", "", "", "", ""]
+  // Battery meter (scripts/battery.sh): laptop battery on the bar, plus every
+  // wireless peripheral that reports a level (mouse, headphones, keyboard) in
+  // the tooltip. On a machine with no battery it shows a small mouse icon, and
+  // hides itself if nothing reports at all.
+  "custom/battery": {
+    "exec": "$HOME/.config/waybar/scripts/battery.sh",
+    "return-type": "json",
+    "interval": 30,
+    "format": "{}",
+    "tooltip": true
   },
   "power-profiles-daemon": {
     "format": "{icon}",
