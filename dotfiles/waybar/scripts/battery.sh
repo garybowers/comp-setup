@@ -4,6 +4,8 @@
 #   - Lists peripheral batteries (mouse / headphones / keyboard) in the tooltip.
 #   - Works on any machine: no hardcoded battery name or device models.
 #   - Hides itself on desktops with no battery and no wireless peripherals.
+#   - Sends ONE desktop notification when any battery (laptop or peripheral)
+#     drops to low, and re-arms once that device has recovered/charged.
 #   - Pure-ASCII source: every glyph is emitted via printf '\uXXXX', so there
 #     are no Nerd Font bytes stored in this file (portable + un-strippable).
 #
@@ -15,6 +17,26 @@ g() { printf "$1"; }   # emit a glyph from an escape, e.g. g ''
 command -v upower >/dev/null 2>&1 || { echo '{"text":"","tooltip":""}'; exit 0; }
 
 text=""; tip=""; cls=""; cap=0
+
+# ---------- low-battery notifications ----------
+# A device is "low" at or below LOW_PCT percent, or when it only reports a
+# coarse level and that level is low/critical. Devices already notified are
+# remembered in a runtime file so the notification fires once, not every poll.
+LOW_PCT=${BATTERY_LOW_PCT:-15}
+low_state="${XDG_RUNTIME_DIR:-/tmp}/waybar-battery-low"
+
+notify_low() {   # notify_low <key> <name> <value>
+  grep -qxF "$1" "$low_state" 2>/dev/null && return
+  echo "$1" >>"$low_state"
+  command -v notify-send >/dev/null 2>&1 &&
+    notify-send -u critical -i battery-caution "Battery low" "$2: $3"
+}
+
+clear_low() {    # clear_low <key>  -- device recovered, re-arm its notification
+  [[ -f $low_state ]] || return 0
+  grep -vxF "$1" "$low_state" >"$low_state.tmp" 2>/dev/null
+  mv "$low_state.tmp" "$low_state"
+}
 
 # ---------- system (laptop) battery ----------
 sysbat=$(upower -e 2>/dev/null | grep -m1 -E '/battery_BAT')
@@ -34,6 +56,11 @@ if [[ -n $sysbat ]]; then
       if   (( cap <= 15 )); then cls=critical
       elif (( cap <= 30 )); then cls=warning; fi ;;
   esac
+  if [[ $state == discharging ]] && (( cap <= LOW_PCT )); then
+    notify_low "$sysbat" "Laptop" "${cap}%"
+  elif [[ $state != discharging ]] || (( cap > LOW_PCT + 5 )); then
+    clear_low "$sysbat"
+  fi
   text="${cap}% ${ico}"
   tip="$(g '')  Laptop  ${cap}%  (${state//-/ })"
 fi
@@ -54,6 +81,13 @@ for d in $(upower -e 2>/dev/null | grep -E 'battery_hidpp|headset_|mouse_|keyboa
     val="$pct"
   fi
   [[ -z $val ]] && continue
+
+  num=${val%\%}
+  if [[ $val == low || $val == critical ]] || { [[ $num =~ ^[0-9]+$ ]] && (( num <= LOW_PCT )); }; then
+    notify_low "$d" "$model" "$val"
+  else
+    clear_low "$d"
+  fi
 
   if   [[ $d == *headset* || $model == *Ear* || $model == *Head* ]]; then gi=''        # headphones
   elif [[ $d == *hidpp*   || $d == *mouse*  ]];                       then gi='\U000f037d'   # mouse
