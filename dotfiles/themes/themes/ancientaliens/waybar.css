@@ -1,0 +1,16 @@
+/* AncientAliens (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #09101c;
+@define-color bgdeep #080e18;
+@define-color fg     #ffffff;
+@define-color dim    #84888e;
+@define-color accent #9ab6e6;
+@define-color glow   #9ab6e6;
+@define-color red    #ccf4ff;
+@define-color green  #cce6ff;
+@define-color teal   #9ac9e6;
+@define-color purple #9ac0e6;
+@define-color orange #ccf0ff;
+@define-color yellow #ccecff;
+@define-color cyan   #9ab6e6;
+@define-color crit   #aae0f0;
+@define-color hi     #aae0f0;

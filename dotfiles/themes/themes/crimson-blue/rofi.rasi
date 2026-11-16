@@ -1,0 +1,10 @@
+/* Crimson Blue (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #0a0005;
+    fg:      #ffffff;
+    cyan:    #e69ac0;
+    purple:  #9aaae6;
+    pink:    #ccd6ff;
+    dim:     #848082;
+    sel:     rgba(230,154,192,0.16);
+}

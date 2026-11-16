@@ -1,0 +1,10 @@
+/* Rose Pine (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #191724;
+    fg:      #e0def4;
+    cyan:    #31748f;
+    purple:  #c4a7e7;
+    pink:    #eb6f92;
+    dim:     #7c7a8c;
+    sel:     rgba(49,116,143,0.16);
+}

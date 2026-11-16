@@ -1,0 +1,10 @@
+/* Nightbrew (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #1f1f2e;
+    fg:      #ffffff;
+    cyan:    #9a9ae6;
+    purple:  #9aa1e6;
+    pink:    #cceaff;
+    dim:     #8f8f96;
+    sel:     rgba(154,154,230,0.16);
+}

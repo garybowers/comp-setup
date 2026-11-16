@@ -1,0 +1,16 @@
+/* Rose Pine (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #191724;
+@define-color bgdeep #15141f;
+@define-color fg     #e0def4;
+@define-color dim    #7c7a8c;
+@define-color accent #31748f;
+@define-color glow   #31748f;
+@define-color red    #eb6f92;
+@define-color green  #31748f;
+@define-color teal   #ebbcba;
+@define-color purple #c4a7e7;
+@define-color orange #f09884;
+@define-color yellow #f6c177;
+@define-color cyan   #9ccfd8;
+@define-color crit   #eb6f92;
+@define-color hi     #e0def4;

@@ -1,0 +1,10 @@
+/* Synth Wave (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #2a2139;
+    fg:      #e2e8ff;
+    cyan:    #03edf9;
+    purple:  #fede5d;
+    pink:    #ff517d;
+    dim:     #86849c;
+    sel:     rgba(3,237,249,0.16);
+}

@@ -1,0 +1,16 @@
+/* Pixel Dream (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #1d2021;
+@define-color bgdeep #191b1c;
+@define-color fg     #d4be98;
+@define-color dim    #786f5c;
+@define-color accent #d79921;
+@define-color glow   #d79921;
+@define-color red    #ea6962;
+@define-color green  #a9b665;
+@define-color teal   #89b482;
+@define-color purple #d3869b;
+@define-color orange #e87a58;
+@define-color yellow #e78a4e;
+@define-color cyan   #7daea3;
+@define-color crit   #ea6962;
+@define-color hi     #d4be98;

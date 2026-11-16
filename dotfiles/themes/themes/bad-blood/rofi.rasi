@@ -1,0 +1,10 @@
+/* Bad Blood (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #040000;
+    fg:      #ff2222;
+    cyan:    #ff69b4;
+    purple:  #dc143c;
+    pink:    #90002a;
+    dim:     #821111;
+    sel:     rgba(255,105,180,0.16);
+}

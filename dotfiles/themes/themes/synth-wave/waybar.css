@@ -1,0 +1,16 @@
+/* Synth Wave (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #2a2139;
+@define-color bgdeep #241c30;
+@define-color fg     #e2e8ff;
+@define-color dim    #86849c;
+@define-color accent #03edf9;
+@define-color glow   #03edf9;
+@define-color red    #ff517d;
+@define-color green  #8cffd1;
+@define-color teal   #78faff;
+@define-color purple #fede5d;
+@define-color orange #ff6ca8;
+@define-color yellow #ff87d4;
+@define-color cyan   #65baff;
+@define-color crit   #ff517d;
+@define-color hi     #ffffff;

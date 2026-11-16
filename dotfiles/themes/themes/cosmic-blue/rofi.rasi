@@ -1,0 +1,10 @@
+/* Cosmic Blue (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #24283b;
+    fg:      #d5d6db;
+    cyan:    #787c99;
+    purple:  #7aa2f7;
+    pink:    #f7768e;
+    dim:     #7c7f8b;
+    sel:     rgba(120,124,153,0.16);
+}

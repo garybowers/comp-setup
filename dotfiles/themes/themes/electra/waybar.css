@@ -1,0 +1,16 @@
+/* Electra (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #1e1e2e;
+@define-color bgdeep #1a1a27;
+@define-color fg     #cdd6f4;
+@define-color dim    #767a91;
+@define-color accent #a6adc8;
+@define-color glow   #a6adc8;
+@define-color red    #f38ba8;
+@define-color green  #a6e3a1;
+@define-color teal   #94e2d5;
+@define-color purple #f5c2e7;
+@define-color orange #f6b6ac;
+@define-color yellow #f9e2af;
+@define-color cyan   #87b0f9;
+@define-color crit   #f38ba8;
+@define-color hi     #a1a8c9;

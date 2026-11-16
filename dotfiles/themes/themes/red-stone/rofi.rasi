@@ -1,0 +1,10 @@
+/* Red Stone (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #0a0101;
+    fg:      #ffffff;
+    cyan:    #e69a9a;
+    purple:  #e69a9a;
+    pink:    #ffcccc;
+    dim:     #848080;
+    sel:     rgba(230,154,154,0.16);
+}

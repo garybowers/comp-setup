@@ -1,0 +1,16 @@
+/* DoomBringers (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #0e0600;
+@define-color bgdeep #0c0500;
+@define-color fg     #fffcd8;
+@define-color dim    #86816c;
+@define-color accent #d79921;
+@define-color glow   #d79921;
+@define-color red    #ff9933;
+@define-color green  #b3d966;
+@define-color teal   #73ccb8;
+@define-color purple #ff708c;
+@define-color orange #ff9933;
+@define-color yellow #ff9933;
+@define-color cyan   #7daea3;
+@define-color crit   #ffad4d;
+@define-color hi     #ffffff;

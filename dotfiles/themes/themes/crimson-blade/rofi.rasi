@@ -1,0 +1,10 @@
+/* Crimson Blade (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #0c0b16;
+    fg:      #eceffd;
+    cyan:    #1b41b4;
+    purple:  #976f81;
+    pink:    #c60049;
+    dim:     #7c7d8a;
+    sel:     rgba(27,65,180,0.16);
+}

@@ -1,0 +1,16 @@
+/* Paranoid Sweet (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #161925;
+@define-color bgdeep #13151f;
+@define-color fg     #c3c7c8;
+@define-color dim    #6c7076;
+@define-color accent #00c1e4;
+@define-color glow   #00c1e4;
+@define-color red    #ed254e;
+@define-color green  #71f79f;
+@define-color teal   #00c1e4;
+@define-color purple #c74ded;
+@define-color orange #f38055;
+@define-color yellow #f9dc5c;
+@define-color cyan   #7cb7ff;
+@define-color crit   #ed254e;
+@define-color hi     #dcdfe4;

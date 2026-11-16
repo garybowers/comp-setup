@@ -70,6 +70,7 @@ overwritten on the next deploy. Anything already in place is moved aside to
 | `Super+Space` | App launcher |
 | `Alt+Tab` | Window switcher |
 | `Super+R` | Emoji picker |
+| `Super+T` | Theme and background menu |
 | `Super+=` | Calculator (Enter copies the result) |
 | `Super+X` | Clipboard history |
 | `Super+N` / `Super+Shift+N` | Notification panel / do-not-disturb |

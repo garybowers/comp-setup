@@ -1,0 +1,10 @@
+/* Rain Dark (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #24283b;
+    fg:      #c0caf5;
+    cyan:    #ffffff;
+    purple:  #bb9af7;
+    pink:    #f7768e;
+    dim:     #727998;
+    sel:     rgba(255,255,255,0.16);
+}

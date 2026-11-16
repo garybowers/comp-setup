@@ -18,11 +18,13 @@ import, then live-reloads the apps.
 
 ```sh
 ./set-theme.sh <name>        # e.g. ./set-theme.sh nord
-./set-theme.sh               # list available themes
+./set-theme.sh               # arrow-key menu: themes on the left, backgrounds (shown live) on the right
+./set-theme.sh --rofi        # the same as rofi menus (SUPER + T)
+./set-theme.sh nord bg.jpg   # a named background; "random" for a random one
 ```
 
 The active theme is recorded by the `current` symlink. Hyprland also runs
-`set-theme.sh` at login (re-applies `current`, re-randomises wallpaper).
+`set-theme.sh` at login (re-applies `current`, keeps the chosen wallpaper).
 
 ## Layout
 
@@ -31,7 +33,7 @@ themes/<name>/
   waybar.css            @define-color palette ONLY (see waybar note below)
   kitty.conf            kitty color block
   rofi.rasi             rofi color variables
-  wallpapers/*.{jpg,png}  one or more wallpapers (random pick on switch)
+  wallpapers/*.{jpg,png,webp}  one or more wallpapers
 ```
 
 ### Waybar is variable-based
@@ -52,10 +54,12 @@ recolored. To add a theme, copy an existing `waybar.css` and change the hexes.
 
 ## Wallpapers
 
-The repo ships **no wallpapers** (only the original `tokyo-night/bg1.jpg`).
-Drop your own into each theme's `wallpapers/`. Official packs exist for
-Catppuccin / Gruvbox / Nord. With multiple images, one is picked at random on
-each switch / login.
+Each theme ships wallpapers in its `wallpapers/` folder (jpg, png or webp).
+The added themes and the wallpapers come from [HyDE](https://github.com/HyDE-Project/hyde-themes) and its
+[community gallery](https://github.com/HyDE-Project/hyde-gallery).
+Add your own by dropping files into the folder. With multiple images,
+choose one in the menu; switching theme without choosing picks one at random,
+and the choice is kept across logins.
 
 ## Using this repo on another machine
 

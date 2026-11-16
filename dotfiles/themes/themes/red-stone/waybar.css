@@ -1,0 +1,16 @@
+/* Red Stone (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #0a0101;
+@define-color bgdeep #080101;
+@define-color fg     #ffffff;
+@define-color dim    #848080;
+@define-color accent #e69a9a;
+@define-color glow   #e69a9a;
+@define-color red    #ffcccc;
+@define-color green  #ffcccc;
+@define-color teal   #e69a9b;
+@define-color purple #e69a9a;
+@define-color orange #ffcccc;
+@define-color yellow #ffcccd;
+@define-color cyan   #e69a9a;
+@define-color crit   #f0abaa;
+@define-color hi     #f0abaa;

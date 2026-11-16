@@ -1,0 +1,16 @@
+/* Hack the Box (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #1a2332;
+@define-color bgdeep #161e2a;
+@define-color fg     #a4b1cd;
+@define-color dim    #5f6a80;
+@define-color accent #a4b1cd;
+@define-color glow   #a4b1cd;
+@define-color red    #ff3e3e;
+@define-color green  #9fef00;
+@define-color teal   #2ee7b6;
+@define-color purple #9f00ff;
+@define-color orange #ff761f;
+@define-color yellow #ffaf00;
+@define-color cyan   #004cff;
+@define-color crit   #ff8484;
+@define-color hi     #ffffff;

@@ -1,0 +1,16 @@
+/* Crimson Blade (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #0c0b16;
+@define-color bgdeep #0a0913;
+@define-color fg     #eceffd;
+@define-color dim    #7c7d8a;
+@define-color accent #1b41b4;
+@define-color glow   #1b41b4;
+@define-color red    #c60049;
+@define-color green  #abf157;
+@define-color teal   #968662;
+@define-color purple #976f81;
+@define-color orange #e26654;
+@define-color yellow #fdcd5e;
+@define-color cyan   #525fb8;
+@define-color crit   #d94a8a;
+@define-color hi     #f6ffec;

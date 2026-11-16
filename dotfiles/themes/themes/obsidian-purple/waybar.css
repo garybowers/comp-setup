@@ -1,0 +1,16 @@
+/* Obsidian Purple (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #05010c;
+@define-color bgdeep #04010a;
+@define-color fg     #ffffff;
+@define-color dim    #828086;
+@define-color accent #b59ae6;
+@define-color glow   #b59ae6;
+@define-color red    #deccff;
+@define-color green  #deccff;
+@define-color teal   #b49ae6;
+@define-color purple #b49ae6;
+@define-color orange #deccff;
+@define-color yellow #ddccff;
+@define-color cyan   #b59ae6;
+@define-color crit   #c3aaf0;
+@define-color hi     #c3aaf0;

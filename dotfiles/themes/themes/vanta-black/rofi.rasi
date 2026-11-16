@@ -1,0 +1,10 @@
+/* Vanta Black (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #000000;
+    fg:      #ffffff;
+    cyan:    #d9d9d9;
+    purple:  #ffffff;
+    pink:    #ffffff;
+    dim:     #808080;
+    sel:     rgba(217,217,217,0.16);
+}

@@ -244,6 +244,7 @@ hl.bind(
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("rofi -modi emoji -show emoji")) -- emoji picker (launcher is SUPER + SPACE)
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/themes/set-theme.sh --rofi")) -- theme + background menu
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle: flip the split direction
@@ -473,6 +474,24 @@ hl.window_rule({
     fullscreen = true,
 })
 
+-- Theme colours: read the active theme's palette (the waybar.css that
+-- set-theme.sh links to ~/.config/waybar/theme.css) so window borders match the
+-- bar. set-theme.sh reloads Hyprland after switching. Falls back to Tokyo Night.
+local theme_palette = {}
+do
+	local f = io.open((os.getenv("XDG_CONFIG_HOME") or (os.getenv("HOME") .. "/.config")) .. "/waybar/theme.css", "r")
+	if f then
+		for line in f:lines() do
+			local name, hex = line:match("@define%-color%s+(%w+)%s+#(%x%x%x%x%x%x)")
+			if name then theme_palette[name] = hex end
+		end
+		f:close()
+	end
+end
+local function theme_color(name, fallback, alpha)
+	return "rgba(" .. (theme_palette[name] or fallback) .. alpha .. ")"
+end
+
 hl.config({
 	general = {
 		gaps_in = 2,
@@ -480,8 +499,16 @@ hl.config({
 		border_size = 2,
 		-- https://wiki.hyprland.org/Configuring/Variables/#variable-types for info about colors
 		col = {
-			active_border = { colors = { "rgba(7dcfffee)", "rgba(bb9af7ee)", "rgba(f7768eee)" }, angle = 45 },
-			inactive_border = "rgba(414868aa)",
+			-- Colours follow the active theme (see theme_color above)
+			active_border = {
+				colors = {
+					theme_color("accent", "7dcfff", "ee"),
+					theme_color("purple", "bb9af7", "ee"),
+					theme_color("red", "f7768e", "ee"),
+				},
+				angle = 45,
+			},
+			inactive_border = theme_color("dim", "414868", "66"),
 		},
 		-- Set to true enable resizing windows by clicking and dragging on borders and gaps
 		resize_on_border = true,
@@ -597,7 +624,7 @@ hl.on("hyprland.start", function()
 	)
 	-- These have no systemd unit, so they are launched directly.
 	hl.exec_cmd("swayosd-server &")
-	hl.exec_cmd("easyeffects --service-mode &")
+	hl.exec_cmd("easyeffects --service-mode --hide-window &") -- 8.x opens its window unless told to hide it
 end)
 
 hl.on("config.reloaded", function()

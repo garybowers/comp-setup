@@ -1,0 +1,16 @@
+/* Moonlight (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #212337;
+@define-color bgdeep #1c1e2f;
+@define-color fg     #a3ace1;
+@define-color dim    #62688c;
+@define-color accent #565f89;
+@define-color glow   #565f89;
+@define-color red    #ff5370;
+@define-color green  #2df4c0;
+@define-color teal   #40ffff;
+@define-color purple #b994f1;
+@define-color orange #ff8d74;
+@define-color yellow #ffc777;
+@define-color cyan   #04d1f9;
+@define-color crit   #f67f81;
+@define-color hi     #b4a4f4;

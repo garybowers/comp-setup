@@ -1,0 +1,10 @@
+/* Pixel Dream (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #1d2021;
+    fg:      #d4be98;
+    cyan:    #d79921;
+    purple:  #d3869b;
+    pink:    #ea6962;
+    dim:     #786f5c;
+    sel:     rgba(215,153,33,0.16);
+}

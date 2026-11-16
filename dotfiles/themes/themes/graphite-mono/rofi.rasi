@@ -1,0 +1,10 @@
+/* Graphite Mono (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #262626;
+    fg:      #d9d9d9;
+    cyan:    #d9d9d9;
+    purple:  #a6a6a6;
+    pink:    #d9d9d9;
+    dim:     #808080;
+    sel:     rgba(217,217,217,0.16);
+}

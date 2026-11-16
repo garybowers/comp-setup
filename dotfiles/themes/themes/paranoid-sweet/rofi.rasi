@@ -1,0 +1,10 @@
+/* Paranoid Sweet (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #161925;
+    fg:      #c3c7c8;
+    cyan:    #00c1e4;
+    purple:  #c74ded;
+    pink:    #ed254e;
+    dim:     #6c7076;
+    sel:     rgba(0,193,228,0.16);
+}

@@ -1,0 +1,16 @@
+/* Material Sakura (light) -- palette from HyDE. Palette only. */
+@define-color bg     #faf4ed;
+@define-color bgdeep #d4cfc9;
+@define-color fg     #575279;
+@define-color dim    #a8a3b3;
+@define-color accent #b4637a;
+@define-color glow   #b4637a;
+@define-color red    #b4637a;
+@define-color green  #286983;
+@define-color teal   #d7827e;
+@define-color purple #907aa9;
+@define-color orange #cf8057;
+@define-color yellow #ea9d34;
+@define-color cyan   #56949f;
+@define-color crit   #b4637a;
+@define-color hi     #575279;

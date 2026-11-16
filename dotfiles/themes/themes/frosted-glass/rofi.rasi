@@ -1,0 +1,10 @@
+/* Frosted Glass (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #ffffff;
+    fg:      #262626;
+    cyan:    #a44185;
+    purple:  #9f00bc;
+    pink:    #f72729;
+    dim:     #929292;
+    sel:     rgba(164,65,133,0.16);
+}

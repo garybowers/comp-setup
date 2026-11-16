@@ -1,0 +1,10 @@
+/* AncientAliens (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #09101c;
+    fg:      #ffffff;
+    cyan:    #9ab6e6;
+    purple:  #9ac0e6;
+    pink:    #ccf4ff;
+    dim:     #84888e;
+    sel:     rgba(154,182,230,0.16);
+}

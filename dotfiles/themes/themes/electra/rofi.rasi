@@ -1,0 +1,10 @@
+/* Electra (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #1e1e2e;
+    fg:      #cdd6f4;
+    cyan:    #a6adc8;
+    purple:  #f5c2e7;
+    pink:    #f38ba8;
+    dim:     #767a91;
+    sel:     rgba(166,173,200,0.16);
+}

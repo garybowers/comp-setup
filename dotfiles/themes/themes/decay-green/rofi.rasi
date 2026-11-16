@@ -1,0 +1,10 @@
+/* Decay Green (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #0d0f18;
+    fg:      #a5b6cf;
+    cyan:    #93cee9;
+    purple:  #c296eb;
+    pink:    #dd6777;
+    dim:     #596274;
+    sel:     rgba(147,206,233,0.16);
+}

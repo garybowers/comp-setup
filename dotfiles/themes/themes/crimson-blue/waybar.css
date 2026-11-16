@@ -1,0 +1,16 @@
+/* Crimson Blue (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #0a0005;
+@define-color bgdeep #080004;
+@define-color fg     #ffffff;
+@define-color dim    #848082;
+@define-color accent #e69ac0;
+@define-color glow   #e69ac0;
+@define-color red    #ccd6ff;
+@define-color green  #ccd7ff;
+@define-color teal   #e69b9a;
+@define-color purple #9aaae6;
+@define-color orange #e6d2e6;
+@define-color yellow #ffcdcc;
+@define-color cyan   #e69ac0;
+@define-color crit   #aab7f0;
+@define-color hi     #aab7f0;

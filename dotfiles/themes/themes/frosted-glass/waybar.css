@@ -1,0 +1,16 @@
+/* Frosted Glass (light) -- palette from HyDE. Palette only. */
+@define-color bg     #ffffff;
+@define-color bgdeep #d9d9d9;
+@define-color fg     #262626;
+@define-color dim    #929292;
+@define-color accent #a44185;
+@define-color glow   #a44185;
+@define-color red    #f72729;
+@define-color green  #32895c;
+@define-color teal   #32c2c0;
+@define-color purple #9f00bc;
+@define-color orange #f84b22;
+@define-color yellow #f96f1c;
+@define-color cyan   #125ccf;
+@define-color crit   #fb0416;
+@define-color hi     #262626;

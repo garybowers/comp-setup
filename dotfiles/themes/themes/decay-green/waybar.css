@@ -1,0 +1,16 @@
+/* Decay Green (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #0d0f18;
+@define-color bgdeep #0b0d14;
+@define-color fg     #a5b6cf;
+@define-color dim    #596274;
+@define-color accent #93cee9;
+@define-color glow   #93cee9;
+@define-color red    #dd6777;
+@define-color green  #86aaec;
+@define-color teal   #93cee9;
+@define-color purple #c296eb;
+@define-color orange #e49d8c;
+@define-color yellow #ecd3a0;
+@define-color cyan   #90ceaa;
+@define-color crit   #e26c7c;
+@define-color hi     #d0d3d8;

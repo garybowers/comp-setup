@@ -1,0 +1,16 @@
+/* Oxo Carbon (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #161616;
+@define-color bgdeep #131313;
+@define-color fg     #ffffff;
+@define-color dim    #8a8a8a;
+@define-color accent #ee5396;
+@define-color glow   #ee5396;
+@define-color red    #ee5396;
+@define-color green  #42be65;
+@define-color teal   #3ddbd9;
+@define-color purple #ff7eb6;
+@define-color orange #f69e88;
+@define-color yellow #ffe97b;
+@define-color cyan   #33b1ff;
+@define-color crit   #ee5396;
+@define-color hi     #ffffff;

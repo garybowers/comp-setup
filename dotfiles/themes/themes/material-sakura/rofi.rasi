@@ -1,0 +1,10 @@
+/* Material Sakura (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #faf4ed;
+    fg:      #575279;
+    cyan:    #b4637a;
+    purple:  #907aa9;
+    pink:    #b4637a;
+    dim:     #a8a3b3;
+    sel:     rgba(180,99,122,0.16);
+}

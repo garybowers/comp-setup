@@ -1,0 +1,16 @@
+/* Edge Runner (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #000000;
+@define-color bgdeep #000000;
+@define-color fg     #fdf500;
+@define-color dim    #7e7a00;
+@define-color accent #ffa6c2;
+@define-color glow   #ffa6c2;
+@define-color red    #d62246;
+@define-color green  #4dbd4f;
+@define-color teal   #2cf6b3;
+@define-color purple #a56df2;
+@define-color orange #ea8c23;
+@define-color yellow #fdf500;
+@define-color cyan   #f29c6b;
+@define-color crit   #ec0101;
+@define-color hi     #ffffff;

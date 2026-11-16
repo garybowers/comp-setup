@@ -1,0 +1,16 @@
+/* Nightbrew (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #1f1f2e;
+@define-color bgdeep #1a1a27;
+@define-color fg     #ffffff;
+@define-color dim    #8f8f96;
+@define-color accent #9a9ae6;
+@define-color glow   #9a9ae6;
+@define-color red    #cceaff;
+@define-color green  #ccd1ff;
+@define-color teal   #9aa7e6;
+@define-color purple #9aa1e6;
+@define-color orange #cce0ff;
+@define-color yellow #ccd5ff;
+@define-color cyan   #9a9ae6;
+@define-color crit   #aad3f0;
+@define-color hi     #aad3f0;

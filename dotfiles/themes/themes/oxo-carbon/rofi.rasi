@@ -1,0 +1,10 @@
+/* Oxo Carbon (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #161616;
+    fg:      #ffffff;
+    cyan:    #ee5396;
+    purple:  #ff7eb6;
+    pink:    #ee5396;
+    dim:     #8a8a8a;
+    sel:     rgba(238,83,150,0.16);
+}

@@ -1,0 +1,16 @@
+/* Bad Blood (dark) -- palette from HyDE. Palette only. */
+@define-color bg     #040000;
+@define-color bgdeep #030000;
+@define-color fg     #ff2222;
+@define-color dim    #821111;
+@define-color accent #ff69b4;
+@define-color glow   #ff69b4;
+@define-color red    #90002a;
+@define-color green  #ff6347;
+@define-color teal   #ffa07a;
+@define-color purple #dc143c;
+@define-color orange #aa0838;
+@define-color yellow #c51046;
+@define-color cyan   #ff69b4;
+@define-color crit   #ff0033;
+@define-color hi     #ffa500;

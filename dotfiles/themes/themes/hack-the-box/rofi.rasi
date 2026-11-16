@@ -1,0 +1,10 @@
+/* Hack the Box (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #1a2332;
+    fg:      #a4b1cd;
+    cyan:    #a4b1cd;
+    purple:  #9f00ff;
+    pink:    #ff3e3e;
+    dim:     #5f6a80;
+    sel:     rgba(164,177,205,0.16);
+}

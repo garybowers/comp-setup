@@ -1,0 +1,10 @@
+/* Edge Runner (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #000000;
+    fg:      #fdf500;
+    cyan:    #ffa6c2;
+    purple:  #a56df2;
+    pink:    #d62246;
+    dim:     #7e7a00;
+    sel:     rgba(255,166,194,0.16);
+}

@@ -1,0 +1,10 @@
+/* Moonlight (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #212337;
+    fg:      #a3ace1;
+    cyan:    #565f89;
+    purple:  #b994f1;
+    pink:    #ff5370;
+    dim:     #62688c;
+    sel:     rgba(86,95,137,0.16);
+}

@@ -1,0 +1,10 @@
+/* DoomBringers (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #0e0600;
+    fg:      #fffcd8;
+    cyan:    #d79921;
+    purple:  #ff708c;
+    pink:    #ff9933;
+    dim:     #86816c;
+    sel:     rgba(215,153,33,0.16);
+}

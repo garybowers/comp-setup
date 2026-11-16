@@ -1,0 +1,10 @@
+/* Obsidian Purple (rofi colors, from HyDE). Imported by ~/.config/rofi/config.rasi */
+* {
+    bg:      #05010c;
+    fg:      #ffffff;
+    cyan:    #b59ae6;
+    purple:  #b49ae6;
+    pink:    #deccff;
+    dim:     #828086;
+    sel:     rgba(181,154,230,0.16);
+}
