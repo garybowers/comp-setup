@@ -137,15 +137,26 @@ function aurinst {
     fi
     mkdir -p /tmp/aur
     rm -rf "/tmp/aur/$pkg"
-    cd /tmp/aur && git clone "https://aur.archlinux.org/${pkg}.git" && cd "$pkg" && yes | makepkg -sic --needed
+    # Build in a subshell so the script's working directory is untouched
+    # (otherwise we'd be left sitting in the directory deleted below).
+    local rc=0
+    (
+        cd /tmp/aur \
+          && git clone "https://aur.archlinux.org/${pkg}.git" \
+          && cd "$pkg" \
+          && makepkg -sic --noconfirm --needed
+    ) || rc=$?
     rm -rf "/tmp/aur/$pkg"
+    return "$rc"
 }
 
 # ---------------------------------------------------------------------------
 # Mirrors & system update
 # ---------------------------------------------------------------------------
 step "Configuring fastest mirrors and updating the system"
-sudo pacman -S --noconfirm --needed reflector rsync git
+# base-devel provides fakeroot, debugedit, gcc, etc. — makepkg needs them to
+# build AUR packages (yay), and a minimal install doesn't include it.
+sudo pacman -S --noconfirm --needed reflector rsync git base-devel
 sudo reflector --country gb --fastest 10 --save /etc/pacman.d/mirrorlist
 sudo pacman -Suy --noconfirm
 
@@ -320,6 +331,7 @@ sudo pacman -S --needed --noconfirm \
     firefox \
     thunderbird \
     tig \
+    vim \
     neovim \
     less \
     go gopls \
